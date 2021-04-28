@@ -1,0 +1,156 @@
+!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <title>Tab Alamat</title>
+  <style>
+    .nav-tabs .nav-link.active {
+      background-color: deepskyblue;
+      color: white;
+      border: 3px solid deepskyblue;
+    }
+
+    .nav-tabs .nav-link {
+      background-color: white;
+      color: deepskyblue;
+    }
+
+    .tab-content {
+      border: 1px solid deepskyblue;
+      padding: 50px;
+      height: 800px;
+      width: 850px;
+    }
+
+    /* table,
+      th,
+      td {
+        border: 2px solid black;
+      } */
+  </style>
+</head>
+
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: deepskyblue; height: 50px">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="margin-top: 15px; background-color: deepskyblue">
+          <li class="breadcrumb-item"><a href="#">Beranda</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Profile</li>
+        </ol>
+      </nav>
+    </div>
+  </nav>
+  <!-- AKHIR NAVBAR -->
+
+  <div class="container bootstrap snippet">
+    <div class="row">
+      <div class="col-sm-3" style="margin-top: 100px">
+        <!--left col-->
+        <div class="text-center" style="float: left">
+          <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="rounded-circle" alt="avatar" />
+          <div class="bintangicon" style="margin-top: 20px; margin-bottom: 10px">
+            <i class="fas fa-star" style="font-size: 25px; color: chocolate"></i>
+          </div>
+          <h6>Bronze Member</h6>
+          <h6>Since 2020</h6>
+        </div>
+        <br />
+
+        <div class="editicon" style="float: left; width: 10px">
+          <a href="https://www.youtube.com/watch?v=DPnJldwv22o">
+            <i class="fas fa-edit" type="button" style="font-size: 15px"></i>
+          </a>
+        </div>
+
+        <div class="clearleft" style="clear: left"></div>
+        <br /><br />
+
+        <div class="borderless">
+          <table>
+            <tbody>
+              <tr>
+                <a href="www.google.com">
+                  <h6 type="button" style="color: deepskyblue; padding: 20px"><b> Pasien</b></h6>
+                </a>
+              </tr>
+              <tr>
+                <a href="www.google.com">
+                  <h6 type="button" style="color: deepskyblue; padding: 20px"><b>Pembelian Obat</b></h6>
+                </a>
+              </tr>
+              <tr>
+                <a href="www.google.com">
+                  <h6 type="button" style="color: deepskyblue; padding: 20px"><b>Rencana Kedatangan</b></h6>
+                </a>
+              </tr>
+              <tr>
+                <a href="www.google.com">
+                  <h6 type="button" style="color: deepskyblue; padding: 20px"><b>Riwayat Chat Dokter</b></h6>
+                </a>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!--/col-3-->
+
+      <div class="col-sm-9" style="margin-top: 100px">
+        <div class="container mt-2">
+          <ul class="nav nav-tabs">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#profile">Profile</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#alamat">Alamat</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" onclick="" href="#pembayaran">Pembayaran</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane" id="profile">
+              <div class="row border g-0 rounded shadow-sm">
+                <div class="col p-4">
+                </div>
+                <div class="col-auto"></div>
+              </div>
+            </div>
+            <!-- tab-pane profile -->
+
+            <div class="tab-pane" id="alamat">
+              <div class="row border g-0 rounded shadow-sm">
+                <div class="col p-4">
+                  <div class="col-sm-8">
+                    <button class="btn btn-primary" style="float: right;" onclick="AddForm()">Tambah</button>
+                  </div>
+                  <div class="container mt-5" id="relationList">
+                  </div>
+                </div>
+                <div class="col-auto"></div>
+              </div>
+            </div>
+            <!-- tab-pane alamat -->
+
+            <div class="tab-pane active" id="pembayaran">
+            </div>
+            <!-- tab-pane pembayaran -->
+          </div>
+          <!-- Tab content -->
+        </div>
+      </div>
+    </div>
+    <!-- row -->
+    <script src="/js/jquery-3.5.1.min.js"></script>
+    <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- FONT AWESOME LINK -->
+    <script src="https://kit.fontawesome.com/a2c3d1ef47.js" crossorigin="anonymous"></script>
+    <!-- AKHIR FONT AWESOME LINK -->
+
+  </div>
+  <!-- container bootstrap snippet -->
+</body>
+
+</html>

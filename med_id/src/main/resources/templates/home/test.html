@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en"
+xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="../../static/css/bootstrap.css" />
+    <link rel="stylesheet" href="../../static/css/datepicker.min.css" />
+    <link rel="stylesheet" href="../../static/css/custom.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,700&display=swap" rel="stylesheet">
+    <script src="../../static//js/jquery-3.5.1.min.js"></script>
+    <script src="../../static/js/bootstrap.js"></script>
+    <script src="../../static//js/datepicker.min.js"></script>
+    <script src="../../static//js/parsley.min.js"></script>
+    <script src="../../static//js/sweetalert.js"></script>
+    <script src="../../static//js/polyfill.js"></script>
+</head>
+
+<body>
+
+
+<nav class="navbar py-4 navbar-expand-lg navbar-light" style="background-color: #c3f0ff;">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img src="../../static/img/logo.png" width="187" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <input class="form-control outline-primary me-3 border border-info" type="search" placeholder="Cari Dokter atau Faskes" aria-label="Search">
+            <button class="btn btn-primary" type="submit" style="margin-left: 18px"><i class="bi bi-search"></i></button>
+            <ul class="navbar-nav ml-auto">
+                <!-- <a class="btn px-4 btn-secondary ml-5" href="#" role="button">Sign In</a>
+                <a class="btn px-4 btn-primary ml-2" href="#" role="button">Sign Up</a> -->
+<!--                <a href="#" class="btn btn-outline-primary" style="margin-left: 20px ">Daftar</a>-->
+<!--                <a href="admin.html" class="btn btn-primary" style="margin-left: 20px">Masuk</a>-->
+                <a sec:authorize="isAnonymous()" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#registerModal">Daftar</a>
+                <a sec:authorize="isAnonymous()" type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#loginModal">Masuk</a>
+                <div sec:authorize="isAuthenticated()" class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Hi, <span th:if="${firstName != null}" th:utext="${firstName}"></span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" style="cursor: pointer;" onclick="Logout()">Logout</a>
+                    </div>
+                </div>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<section class="heromed mt-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+                <a href="#" class="text-decoration-none">
+                    <img width="130" height="130" src="../../static/img/medical.svg" alt="">
+                    <h5>Buat Janji</h5></a>
+            </div>
+            <div class="col-md-2 text-center">
+                <a href="#" class="text-decoration-none">
+                    <img src="../../static/img/massage.svg " width="130" height="130" alt="">
+                    <h5>Konsultasi Dokter</h5></a>
+            </div>
+            <div class="col-md-2 text-center">
+                <a href="#" class="text-decoration-none">
+                    <img src="../../static/img/dokter.svg " width="130" height="130" alt="">
+                    <h5>Cari Dokter</h5></a>
+            </div>
+            <div class="col-md-2 text-center">
+                <a href="#" class="text-decoration-none">
+                    <img src="../../static/img/obat.svg " width="130" height="130" alt="">
+
+                    <h5>Cari Obat</h5></a>
+            </div>
+            <div class="col-md-2 text-center">
+                <a href="#" class="text-decoration-none">
+                    <img src="../../static/img/hospital.svg" width="130" height="130" alt="">
+                    <h5>Fasilitas Kesehatan</h5></a>
+            </div>
+        </div>
+    </div>
+    <!--  Modal login  -->
+    <div class="modal fade" id="loginModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Masuk</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mt-3 px-5">
+                        <div class="error"></div>
+                        <form name="f" th:action="@{/j_spring_security_check}" method="post" id="formLogin" data-parsley-trigger="keyup" data-parsley-validate>
+                            <div class="form-group emailAdress">
+                                <label>E-mail*</label>
+                                <input type="email" class="form-control" placeholder="Alamat email" id="loginEmail" name="email" data-parsley-type="email" required autocomplete="off" autofocus>
+                            </div>
+                            <div class="form-group emailAdress">
+                                <label>Password*</label>
+                                <input type="password" class="form-control" placeholder="Password" id="loginPassword" name="password" required>
+                            </div>
+                            <div class="text-center LogginTrigger">
+                                <button type="submit" class="btn btn-primary">Login</button>
+                            </div>
+                        </form>
+                        <div class="text-center mt-3">
+                            <p><a class="text-primary" style="cursor: pointer" onclick="LupaPassword()">Lupa password?</a></p>
+                            <p>atau</p>
+                            <p>Belum punya akun? <a class="text-primary" style="cursor: pointer" onclick="OpenRegister()">Daftar</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal register -->
+    <div class="modal fade" id="registerModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Daftar</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-center">Masukkan email anda, kami akan melakukan pengecekan</h5>
+                    <div class="mt-3 px-5">
+                        <form class="checkEmail" id="formEmail" data-parsley-trigger="keyup" data-parsley-validate>
+                            <div class="form-group emailAdress">
+                                <label></label>
+                                <input type="email" class="form-control text-center" placeholder="Alamat email" id="emailAdress" data-parsley-type="email" required>
+                            </div>
+                            <div class="text-center EmailTrigger">
+                                <button type="submit" class="btn btn-primary">Kirim OTP</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal OTP -->
+    <div class="modal fade" id="OTPModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Verifikasi E-mail ${email}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-center">Masukkan kode OTP yang telah dikirim ke email anda</h5>
+                    <div class="mt-3 px-5">
+                        <form class="OTPCode" id="formOTP" data-parsley-trigger="keyup" data-parsley-validate>
+                            <div class="form-group OTPCode">
+                                <label></label>
+                                <input type="text" class="form-control text-center" placeholder="Kode OTP" id="OTPCode" required>
+                                <div class="userId"></div>
+                            </div>
+                            <div class="text-center mt-2 mb-3">
+                                <div id="myTimer"></div>
+                                <a id="myBtn" class="requestOTP text-primary" style="display: none">Kirim ulang kode OTP</a>
+                            </div>
+                            <div class="text-center OTPTrigger">
+                                <button type="submit" class="btn btn-primary">Konfirmasi OTP</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal password -->
+    <div class="modal fade" id="passwordModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-center">Buat password anda</h5>
+                    <div class="mt-3 px-5">
+                        <form class="createPassword" id="formPassword" data-parsley-trigger="keyup" data-parsley-validate>
+                            <div class="form-group password">
+                                <label></label>
+                                <input type="password" class="form-control text-center" placeholder="Password" id="password"
+                                       data-parsley-minlength="8"
+                                       data-parsley-minlength-message="Password minimal 9 karakter"
+                                       data-parsley-required-message="Mandatori"
+                                       data-parsley-uppercase="1"
+                                       data-parsley-lowercase="1"
+                                       data-parsley-number="1"
+                                       data-parsley-special="1"
+                                       required
+                                />
+                            </div>
+                            <div class="form-group password">
+                                <label></label>
+                                <input type="password" class="form-control text-center" placeholder="Konfirmasi password" id="passwordConfirmation"
+                                       data-parsley-equalto="#password"
+                                       data-parsley-equalto-message="Password tidak sama"
+                                       data-parsley-required-message="Mandatori"
+                                       data-parsley-required
+                                       required
+                                />
+                                <div class="userId"></div>
+                            </div>
+                            <div class="text-center PasswordTrigger">
+                                <button type="submit" class="btn btn-primary">Simpan password</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal signup -->
+    <div class="modal fade" id="signUpModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Daftar</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mt-3 px-5">
+                        <form class="formSignUp" id="formSignUp" data-parsley-trigger="keyup" data-parsley-validate>
+                            <div class="form-group fullName">
+                                <label>Nama lengkap</label>
+                                <input type="text" class="form-control" id="fullName" required>
+                                <div class="userId"></div>
+                            </div>
+                            <div class="form-group mobilePhone">
+                                <label>Nomor HP</label>
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">+62</div>
+                                    </div>
+                                    <input type="text" class="form-control" id="mobilePhone" data-parsley-type="number" data-parsley-type-message="Masukkan angka" data-parsley-errors-container="#number-errors" required >
+                                </div>
+                                <div id="number-errors"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Daftar sebagai</label>
+                                <select class="custom-select role" id="roleId">
+                                </select>
+                            </div>
+                            <div class="text-center SignUpTrigger">
+                                <button type="submit" class="btn btn-primary">Daftar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <span class="text-muted"><img src="../../static/img/logo.png" width="187" class="center"></span>
+    </div>
+</footer>
+<script>
+    // $(document).ready(SignUp(1))
+
+    $('#formLogin').parsley();
+    $('#formEmail').parsley();
+    $('#formOTP').parsley();
+    $('#formPassword').parsley();
+
+    //has uppercase
+    window.Parsley.addValidator('uppercase', {
+        requirementType: 'number',
+        validateString: function(value, requirement) {
+            var uppercases = value.match(/[A-Z]/g) || [];
+            return uppercases.length >= requirement;
+        },
+        messages: {
+            en: 'Password harus mengandung huruf besar.'
+        }
+    });
+
+    //has lowercase
+    window.Parsley.addValidator('lowercase', {
+        requirementType: 'number',
+        validateString: function(value, requirement) {
+            var lowecases = value.match(/[a-z]/g) || [];
+            return lowecases.length >= requirement;
+        },
+        messages: {
+            en: 'Password harus mengandung huruf kecil.'
+        }
+    });
+
+    //has number
+    window.Parsley.addValidator('number', {
+        requirementType: 'number',
+        validateString: function(value, requirement) {
+            var numbers = value.match(/[0-9]/g) || [];
+            return numbers.length >= requirement;
+        },
+        messages: {
+            en: 'Password harus mengandung angka.'
+        }
+    });
+
+    //has special char
+    window.Parsley.addValidator('special', {
+        requirementType: 'number',
+        validateString: function(value, requirement) {
+            var specials = value.match(/[^a-zA-Z0-9]/g) || [];
+            return specials.length >= requirement;
+        },
+        messages: {
+            en: 'Password harus mengandung symbol.'
+        }
+    });
+
+    function LupaPassword()
+    {
+        console.log("Lupa password")
+    }
+
+    function OpenRegister()
+    {
+        $('#loginModal').modal('toggle')
+
+        setTimeout(function () {
+            $('#registerModal').modal('toggle')
+        }, 1000);
+    }
+
+    $('.checkEmail').on('submit', function (e) {
+
+        const checkEmail = '{ "email" : "'+$('#emailAdress').val()+'" }'
+
+        let EmailTrigger = ''
+        EmailTrigger += '<button class="btn btn-primary" type="button" disabled>'
+        EmailTrigger += '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"> </span>'
+        EmailTrigger += ' Loading...'
+        EmailTrigger += '</button>'
+
+        $('.EmailTrigger').html(EmailTrigger)
+
+        $.ajax({
+            url: '/api/v1/user/checkemail',
+            type: 'POST',
+            contentType: "application/json",
+            data: checkEmail,
+            statusCode: {
+                302: function (response) {
+
+                    let buttonEmail = ''
+                    buttonEmail += '<div class="text-center EmailTrigger">'
+                    buttonEmail += '<button type="submit" class="btn btn-primary">Kirim OTP</button>'
+                    buttonEmail += '</div>'
+
+                    let exist = ''
+                    exist += '<div class="form-group emailAdress">'
+                    exist += '<label></label>'
+                    exist += '<input type="email" class="form-control text-center is-invalid" value="'+ $('#emailAdress').val() + '" id="emailAdress" data-parsley-type="email" required>'
+                    exist += '<div class="invalid-feedback">Email sudah digunakan</div>'
+                    exist += '</div>'
+
+                    setTimeout(function () {
+                        $('.EmailTrigger').html(buttonEmail)
+                        $('.emailAdress').html(exist)
+                    }, 2000)
+                }
+            },
+            success: function(responseEmail) {
+
+                setTimeout(function(){
+                    $('#registerModal').modal('toggle')
+
+                    setTimeout(function () {
+                        VerifOTP(responseEmail.userId)
+                    }, 800)
+                    console.log(sessionStorage)
+
+                }, 2000);
+            },
+            // error: function (xhr, statu)
+
+        });
+
+        e.preventDefault()
+    })
+
+    function VerifOTP(id)
+    {
+        $('#OTPModal').modal('toggle')
+
+        let userId = '<input type="hidden" id="userId" value="' + id + '" >'
+        $('.userId').html(userId)
+
+        Countdown();
+
+        $('.OTPCode').on('submit', function (e) {
+
+            let OTPTrigger = ''
+            OTPTrigger += '<button class="btn btn-primary" type="button" disabled>'
+            OTPTrigger += '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"> </span>'
+            OTPTrigger += ' Loading...'
+            OTPTrigger += '</button>'
+
+            $('.OTPTrigger').html(OTPTrigger)
+
+            $.ajax({
+                url: '/api/v1/token/tokenverification/' + $('#OTPCode').val(),
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (responseOTP) {
+
+                    let OTPStatus = '{ "expired" : true, "delete" : true }'
+
+                    $.ajax({
+                        url: '/api/v1/token/changetokenstatus/' + $('#userId').val(),
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: OTPStatus,
+                        success: function (OTPStatus)
+                        {
+                            setTimeout(function(){
+                                $('#OTPModal').modal('toggle')
+
+                                setTimeout(function(){
+                                    CreatePassword($('#userId').val())
+                                }, 800);
+
+                            }, 2000);
+                        }
+                    })
+                }
+            });
+
+            e.preventDefault()
+
+        })
+    }
+
+    function CreatePassword(id)
+    {
+
+        $('#passwordModal').modal('toggle')
+
+        let userId = '<input type="hidden" id="userId" value="' + id + '" >'
+        $('.userId').html(userId)
+
+        $('.createPassword').on('submit', function (e) {
+            let passwordRequest = '{ "password" : "'+ $('#password').val() +'" }'
+
+            let PasswordTrigger = ''
+            PasswordTrigger += '<button class="btn btn-primary" type="button" disabled>'
+            PasswordTrigger += '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"> </span>'
+            PasswordTrigger += ' Loading...'
+            PasswordTrigger += '</button>'
+
+            $('.PasswordTrigger').html(PasswordTrigger)
+
+            $.ajax({
+                url: '/api/v1/user/createpassword/' + id,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: passwordRequest,
+                success: function (responsePassword) {
+
+                    setTimeout(function(){
+                        $('#passwordModal').modal('toggle')
+
+                        setTimeout(function(){
+                            SignUp($('#userId').val())
+                        }, 800);
+
+                    }, 2000);
+                }
+            });
+
+            e.preventDefault()
+        })
+
+    }
+
+    function SignUp(id)
+    {
+        $('#signUpModal').modal('toggle')
+
+        let userId = '<input type="hidden" id="userId" value="' + id + '" >'
+        $('.userId').html(userId)
+
+        // Get role
+        $.ajax({
+            url: '/api/v1/roles',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (role) {
+                let employeeRole = '<option>-- Pilih --</option>'
+                for (let i = 0; i < role.length; i++) {
+                    employeeRole += "<option value='" + role[i].id + "'>" + role[i].name + "</option>"
+                }
+                $('.role').html(employeeRole);
+            }
+        });
+
+        $('.formSignUp').on('submit', function (e) {
+
+            let biodataRequest = '{'
+            biodataRequest += ' "fullname" : "' +$('#fullName').val()+ '", '
+            biodataRequest += ' "mobilePhone" : "' +$('#mobilePhone').val()+ '" '
+            biodataRequest += '}'
+
+            let roleRequest = '{ "roleId" : ' +$('#roleId').val()+ ' }'
+
+            let SignUpTrigger = ''
+            SignUpTrigger += '<button class="btn btn-primary" type="button" disabled>'
+            SignUpTrigger += '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"> </span>'
+            SignUpTrigger += ' Loading...'
+            SignUpTrigger += '</button>'
+
+            $('.SignUpTrigger').html(SignUpTrigger)
+
+            $.ajax({
+                url: '/api/v1/user/createuserbiodata/' + $('#userId').val(),
+                type: 'PUT',
+                contentType: 'application/json',
+                data: biodataRequest,
+                success: function (responseBiodata) {
+                    $.ajax({
+                        url: '/api/v1/user/addroleuser/' + $('#userId').val(),
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: roleRequest,
+                        success: function (responseRole) {
+
+                            setTimeout(function(){
+                                $('#signUpModal').modal('toggle')
+
+                                Swal.fire({
+                                    title: 'Selamat!',
+                                    text: 'Akun berhasil dibuat!',
+                                    icon: 'success',
+                                    timer: 2500,
+                                    showConfirmButton: false,
+                                })
+
+                                window.location.replace("/")
+                            }, 2000);
+
+                        }
+                    });
+                }
+            });
+
+            e.preventDefault()
+
+        })
+
+    }
+
+    let OTPCountdown
+    let minutes = 3
+    let seconds = 0
+    function Countdown()
+    {
+        OTPCountdown = setInterval(function () {
+            if (seconds > 0) {
+                seconds--
+            }
+            else if (minutes > 0) {
+                seconds = 59
+                minutes--
+            }
+            else {
+                $("#myBtn").removeAttr('style', 'display: none').attr('style', 'cursor: pointer')
+                $("#myTimer").fadeTo(100, 0)
+            }
+
+            // Show the time left
+            $('#myTimer').html("Kirim ulang OTP dalam " + minutes + ":" + seconds);
+
+        }, 1000);
+    }
+
+    $('#myBtn').on('click', function (){
+        RequestOTP()
+        clearInterval(OTPCountdown);
+
+        setTimeout(function () {
+            minutes = 3
+            seconds = 0
+
+            $("#myBtn").removeAttr('style', 'cursor: pointer').attr('style', 'display: none')
+            $("#myTimer").fadeTo(0, 100)
+
+            Countdown()
+        }, 2000)
+    })
+
+    function RequestOTP()
+    {
+        $.ajax({
+            url: '/api/v1/token/requestnewtoken/' + $('#userId').val(),
+            type: 'PUT',
+            contentType: 'application/json',
+            success: function (responseNewOTP)
+            {
+
+            }
+        })
+    }
+
+    let url = new URL(window.location.href)
+    let getParam = url.searchParams.get("error")
+
+    if (getParam == 'true')
+    {
+        $('#loginModal').modal('toggle')
+        let error = '<p class="text-danger text-center"> email atau password salah </p>'
+        $('.error').html(error)
+
+        $('#loginModal').modal('toggle')
+
+    }
+
+    function Logout()
+    {
+        $.ajax({
+            url: '/logout',
+            contentType: 'application/json',
+            success: function (logout)
+            {
+                window.location.replace("/")
+            }
+        })
+    }
+
+</script>
+
+</body>
+
+</html>

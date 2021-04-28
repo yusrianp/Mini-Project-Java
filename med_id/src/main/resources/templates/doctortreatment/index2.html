@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../../static/css/bootstrap.css" rel="stylesheet">
+    <script src="../../static/js/jquery-3.5.1.min.js"></script>
+    <script src="../../static/js/bootstrap.bundle.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+    <title>Courier Data</title>
+    <style>
+        .pagination{
+            margin-left : 1000px;
+        }
+        .navbar{
+            background-color: #e3f2fd;
+        }
+    </style>
+
+
+</head>
+
+
+<!--    //Navbar//-->
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+    <div class="container">
+        <ul class="nav navbar-nav navbar-left">
+            <a class="navbar-brand" style="color: black;">Golongan Darah</a>
+        </ul>
+    </div>
+</nav>
+
+
+<!-- MODAL 1-->
+
+<div class="container mt-5">
+    <!-- Modal Tambah -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal Content -->
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #e3f2fd;">
+                    <h6 class="modal-title">TAMBAH GOLONGAN DARAH</h6>
+                    <button type="button" onclick="BackBloodGroup()" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="false">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL 2-->
+
+<div class="container mt-5">
+    <!-- Modal Ubah -->
+    <div class="modal fade" id="myModal2" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal Content -->
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #e3f2fd;">
+                    <h6 class="modal-title">UBAH GOLONGAN DARAH</h6>
+                    <button type="button" onclick="BackBloodGroup()" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="false">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body2">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL 3-->
+
+<div class="container mt-5">
+    <!-- Modal Hapus -->
+    <div class="modal fade" id="myModal3" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal Content -->
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #e3f2fd;">
+                    <h6 class="modal-title">Hapus !</h6>
+                    <button type="button" onclick="BackBloodGroup()" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="false">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body3">
+                    <p>Anda akan menghapus golongan darah?</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- AKHIR MODAL 3-->
+
+<!-- MODAL 4 -->
+
+<div class="container mt-5">
+    <!-- Modal Hapus -->
+    <div class="modal fade" id="myModal4" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal Content -->
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #e3f2fd;">
+                    <h6 class="modal-title text-align:center"></h6>
+                    <button type="button" onclick="BackBloodGroup()" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="false">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body3">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AKHIR MODAL 4 -->
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-sm-5 mb-5">
+            <input type="text" class="form-control" placeholder="Search by name" onkeyup="SearchByBank(this.value)">
+        </div>
+
+        <div class="col">
+            <button type="button" class="btn btn-primary float-right" data-bs-toggle="modal" data-bs-target="#myModal"
+                    onclick="Tambah()">Tambah
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- AKHIR MODAL -->
+
+<div id="goldarList"></div>
+
+<script>
+
+    $.ajax({
+        url: '/api/bloodGroup',
+        type: 'get',
+        contentType: 'application/json',
+        success: function (data) {
+            var str = '<table class="table table-bordered" align="center" style="width:80%" >';
+            str += '<tr>';
+            str += '<th style="text-align:center"> Kode </th>';
+            str += '<th style="text-align:center"> Deskripsi </th>';
+            str += '<th style="text-align:center" colspan = "2"> # </th>';
+            str += '</tr>';
+
+            for (i = 0; i < data.length; i++) {
+                str += "<tr>";
+                str += '<td style="text-align:center">' + data[i].code + '</td>';
+                str += '<td style="text-align:center">' + data[i].description + '</td>';
+                str += '<td style="text-align:center">';
+                str += '<button style="width:40px; height:40px;" class="btn btn-sm btn-primary" value="' + data.bloodGroup[i].id + '" onclick="formEdit(this.value)">U</button>';
+                str += '<button style="width:40px; height:40px;" class="btn btn-danger ml-3" value="' + data.bloodGroup[i].id + '" onclick="Helper(this.value)">H</button>';
+                str += '</td>';
+                str += "</tr>";
+            }
+            str += "</table>";
+            $('#goldarList').html(str);
+            }
+    });
+
+    function Tambah() {
+
+        var form = '<table class="table table-borderless">';
+        form += '<tr>';
+        form += '<td>';
+        form += '<label for="code">Kode*</label>';
+        form += '<input class = "form-control" type="text" id="code">';
+        form += '</td>';
+        form += '</tr>';
+        form += '<tr>';
+        form += '<td>';
+        form += '<label for="description">Deskripsi</label>';
+        form += '<input class = "form-control" type="text" id="description">';
+        form += '</td>';
+        form += '</tr>';
+        form += '<tr>';
+        form += '<th>';
+        form += '<button class="btn btn-success float-right ml-5" onclick="SaveBloodGroup(this.value)">Simpan</button>';
+        form += '<button class="btn btn-secondary float-right" onclick="BackBloodGroup()">Batal</button>';
+        form += '</th>';
+        form += '</tr>';
+        form += '</table>';
+
+        $('.modal-title').html("TAMBAH")
+        $('.modal-body').html(form);
+        $('#myModal').modal('show');
+    }
+
+    function SaveBloodGroup() {
+
+        $.ajax({
+
+            url: '/api/bloodGroup',
+            type: 'get',
+            contentType: 'application/json',
+            success: function (dataGet) {
+
+                var codeSave = $("#code").val();
+                if (codeSave != "") {
+                    var count = 0;
+                    for (i = 0;
+                    var formData = '{';
+                    formData += '"code":"' + $('#code').val() + '",';
+                    formData += '"description":"' + $('#description').val() + '",';
+                    formData += '"createdOn":"2021-04-01 13:33:40",';
+                    formData += '"createdBy":"1",';
+                    formData += '"isDelete":"false"';
+                    formData += '}';
+
+                    $.ajax({
+                        url: '/api/bloodGroup',
+                        type: 'post',
+                        contentType: 'application/json',
+                        data: formData,
+                        success: function (data) {
+                            SaveConfirm()
+                        }
+                    });
+                }
+                else {
+                    swal("Peringatan!", "Kode wajib diisi!");
+                }
+            }
+        })
+    }
+
+    function SaveConfirm() {
+        swal("Data Berhasil Disimpan", "", "success");
+        window.setInterval(delaySave, 3000);
+    }
+
+    function delaySave() {
+        window.location.href = '/bloodGroup/index';
+    }
+
+    function formEdit(id) {
+        $.ajax({
+            url: '/api/bloodGroup/' + id,
+            type: 'get',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var form = '<table class="table table-borderless">';
+                form += '<tr>';
+                form += '<th>Kode*</th>';
+                form += '</tr>';
+                form += '<tr>';
+                form += '<td><input class="form-control" type="text" id="code" value="' + data.code + '"></td>';
+                form += '</tr>';
+                form += '<tr>';
+                form += '<th>Deskripsi</th>';
+                form += '</tr>';
+                form += '<tr>';
+                form += '<td><input class="form-control" type="text" id="description" value="' + data.description + '"></td>';
+                form += '</tr>';
+                form += '<tr>';
+                form += '<th>';
+                form += '<button class="btn btn-success float-right ml-5" value ="' + data.id + '" onclick="UpdateBloodGroup(this.value)">Simpan</button>';
+                form += '<button class="btn btn-secondary float-right" onclick="BackBloodGroup()">Batal</button>';
+                form += '</th>';
+                form += '</tr>';
+                form += '</table>';
+
+                //            $('#goldarList').html(form);//
+
+                $('.modal-title').html("Ubah");
+                $('.modal-body2').html(form);
+                $('#myModal2').modal('show')
+            }
+        });
+    }
+
+    function Helper(id) {
+
+        $.ajax({
+            url: '/api/deletebloodGroup/' + id,
+            type: 'get',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var form = '<table class="table table-borderless">';
+                form += '<tr>';
+                form += '<td style="text-align:center">Anda akan menghapus golongan darah Bank ABC ' + data.code + ' ?</td>';
+                form += '</tr>';
+                form += '<tr>';
+                form += '<th>';
+                form += '<button style="width:60px; height:40px;" class="btn btn-success float-right ml-5" value="' + data.id + '" onclick="formDelete(this.value)">Ya</button>';
+                form += '<button style="width:60px; height:40px;" class="btn btn-secondary float-right" onclick="BackBloodGroup()">Tidak</button>';
+                form += '</th>';
+                form += '</tr>';
+                form += '</table>';
+
+                $('.modal-title').html("Hapus");
+                $('.modal-body3').html(form);
+                $('#myModal3').modal('show');
+            }
+        });
+    }
+
+    function formDelete(id) {
+        $.ajax({
+
+            url: '/api/deletebloodGroup/' + id,
+            type: 'get',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var jsonForm = '{';
+                jsonForm += '"code":"' + data.code + '",';
+                jsonForm += '"description":"' + data.description + '",';
+                jsonForm += '"createdOn": "2021-03-25 13:33:40",';
+                jsonForm += '"createdBy":"1",';
+                jsonForm += '"deletedOn":"2021-03-25 13:33:40",';
+                jsonForm += '"deletedBy":"1",';
+                jsonForm += '"isDelete":"true"';
+                jsonForm += '}';
+
+                console.log(jsonForm)
+
+                $.ajax({
+                    url: '/api/deletebloodGroup/' + id,
+                    type: 'put',
+                    contentType: 'application/json',
+                    data: jsonForm,
+                    success: function (dataput) {
+                        swal("Data Berhasil Dihapus", "", "success");
+                        window.setInterval(delayDelete, 2000);
+                    }
+                });
+            }
+        });
+
+    }
+
+    function delayDelete() {
+        window.location.href = '/bloodGroup/index';
+
+    }
+
+    function UpdateBloodGroup(id) {
+
+        $.ajax({
+
+            url: '/api/bloodGroup/' + id,
+            type: 'get',
+            contentType: 'application/json',
+            success: function (dataGet) {
+
+                var formData = '{';
+                formData += '"code":"' + $('#code').val() + '",';
+                formData += '"description":"' + $('#description').val() + '",';
+                formData += '"createdOn": "' + dataGet.createdOn + '",';
+                formData += '"createdBy":"1",';
+                formData += '"modifiedOn":"2021-03-25 13:33:40",';
+                formData += '"modifiedBy":"1",';
+                formData += '"isDelete":"false"';
+                formData += '}';
+
+                $.ajax({
+                    url: '/api/bloodGroup/' + id,
+                    type: 'put',
+                    contentType: 'application/json',
+                    data: formData,
+                    success: function (data) {
+                        EditConfirm()
+                    }
+                });
+            }
+        })
+    }
+
+    function EditConfirm() {
+
+        swal("Data Berhasil Diubah", "", "success");
+        window.setInterval(delayEdit, 3000);
+    }
+    function delayEdit() {
+        window.location.href = '/bloodGroup/index';
+    }
+    function BackBloodGroup() {
+        $(function () {
+            window.location.href = '/bloodGroup/index';
+        });
+    }
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>

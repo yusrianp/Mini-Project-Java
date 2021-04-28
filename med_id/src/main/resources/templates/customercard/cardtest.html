@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="/js/jquery-3.5.1.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous" />
+
+    <!-- FONT AWESOME LINK -->
+    <script src="https://kit.fontawesome.com/a2c3d1ef47.js" crossorigin="anonymous"></script>
+    <!-- AKHIR FONT AWESOME LINK -->
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+    <title>Tab Pembayaran</title>
+    <style>
+        .nav-tabs .nav-link.active {
+            background-color: deepskyblue;
+            color: white;
+            border: 3px solid deepskyblue;
+        }
+
+        .nav-tabs .nav-link {
+            background-color: white;
+            color: deepskyblue;
+        }
+
+        .tab-content {
+            border: 1px solid deepskyblue;
+            padding: 50px;
+            height: 800px;
+            width: 850px;
+        }
+        /* table,
+        th,
+        td {
+          border: 2px solid black;
+        } */
+    </style>
+</head>
+<body>
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: deepskyblue; height: 50px">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="margin-top: 15px; background-color: deepskyblue">
+                <li class="breadcrumb-item"><a href="#">Beranda</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Profile</li>
+            </ol>
+        </nav>
+    </div>
+</nav>
+<!-- AKHIR NAVBAR -->
+
+<div class="container bootstrap snippet">
+    <div class="row">
+        <div class="col-sm-3" style="margin-top: 100px">
+            <!--left col-->
+            <div class="text-center" style="float: left">
+                <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="rounded-circle" alt="avatar" />
+                <div class="bintangicon" style="margin-top: 20px; margin-bottom: 10px">
+                    <i class="fas fa-star" style="font-size: 25px; color: chocolate"></i>
+                </div>
+                <h6>Bronze Member</h6>
+                <h6>Since 2020</h6>
+            </div>
+            <br />
+
+            <div class="editicon" style="float: left; width: 10px">
+                <a href="https://www.youtube.com/watch?v=DPnJldwv22o">
+                    <i class="fas fa-edit" type="button" style="font-size: 15px"></i>
+                </a>
+            </div>
+
+            <div class="clearleft" style="clear: left"></div>
+            <br /><br />
+
+            <div class="borderless">
+                <table>
+                    <tbody>
+                    <tr>
+                        <a href="www.google.com"
+                        ><h6 type="button" style="color: deepskyblue; padding: 20px"><b> Pasien</b></h6></a
+                        >
+                    </tr>
+                    <tr>
+                        <a href="www.google.com"
+                        ><h6 type="button" style="color: deepskyblue; padding: 20px"><b>Pembelian Obat</b></h6></a
+                        >
+                    </tr>
+                    <tr>
+                        <a href="www.google.com"
+                        ><h6 type="button" style="color: deepskyblue; padding: 20px"><b>Rencana Kedatangan</b></h6></a
+                        >
+                    </tr>
+                    <tr>
+                        <a href="www.google.com"
+                        ><h6 type="button" style="color: deepskyblue; padding: 20px"><b>Riwayat Chat Dokter</b></h6></a
+                        >
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!--/col-3-->
+
+        <div class="col-sm-9" style="margin-top: 100px">
+            <div class="container mt-2">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#profile">Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#alamat">Alamat</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" onclick="" href="#pembayaran">Pembayaran</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane" id="profile">
+                        <div class="row border g-0 rounded shadow-sm">
+                            <div class="col p-4">
+                                <h3>Home</h3>
+                                <p>iniininini</p>
+                            </div>
+                            <div class="col-auto"></div>
+                        </div>
+                    </div>
+                    <!-- tab-pane profile -->
+
+                    <div class="tab-pane" id="alamat">
+                        <div class="row border g-0 rounded shadow-sm">
+                            <div class="col p-4">
+                                <h3>Alamat</h3>
+                                <p>tututututuutu</p>
+                            </div>
+                            <div class="col-auto"></div>
+                        </div>
+                    </div>
+                    <!-- tab-pane alamat -->
+
+                    <div class="tab-pane active" id="pembayaran">
+                        <div class="row border g-0 rounded shadow-sm" style="height: 300px">
+                            <div class="col p-4" id="ini"></div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-primary float-right" data-bs-toggle="modal" data-bs-target="#myModal" onclick="Tambah()" style="margin-top: 20px">+Tambah</button>
+                            </div>
+                        </div>
+                        <!-- row pertama -->
+
+                        <div class="row border g-0 rounded shadow-sm" style="height: 300px; margin-top: 20px">
+                            <div class="col p-4" id="ini1"></div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-primary float-right" data-bs-toggle="modal" data-bs-target="#myModal" onclick="Tambah()" style="margin-top: 20px; margin-left: 10px">Isi Saldo</button>
+                                <button type="button" class="btn btn-primary float-right" data-bs-toggle="modal" data-bs-target="#myModal" onclick="Tambah()" style="margin-top: 20px; margin-left: 10px">Atur Pin</button>
+                                <button type="button" class="btn btn-primary float-right" data-bs-toggle="modal" data-bs-target="#myModal" onclick="Tambah()" style="margin-top: 20px; margin-left: 10px">Tutup</button>
+                            </div>
+                        </div>
+                        <!-- row kedua -->
+                    </div>
+                    <!-- tab-pane pembayaran -->
+                </div>
+                <!-- Tab content -->
+            </div>
+        </div>
+    </div>
+    <!-- row -->
+</div>
+<!-- container bootstrap snippet -->
+
+<div class="container mt-5">
+    <!-- Modal Tambah -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal Content -->
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #e3f2fd">
+                    <h3 class="modal-title text-primary" style="text-align: center">Tambah Kartu Kredit/Debit</h3>
+                    <button type="button" onclick="BackCourier()" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="false">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="paymentmethodList"></div>
+
+<input type="text" onkeyup="update(this.value);" /><br />
+<img src="" id="img" style="padding: 5px" /><br />
+<span style="color: red" id="valid">card fails luhn test</span>
+<script>
+    $.ajax({
+        url: "/api/customercard",
+        type: "get",
+        contentType: "application/json",
+        success: function (data) {
+            var str = '<table align="center" style="width:80%; margin-left:20px;" >';
+            str += "<tr>";
+            var count = 0;
+            for (i = 0; i < data.length; i++) {
+                count += 1;
+            }
+            console.log(count);
+            str += '<th style="color:deepskyblue" colspan="3">Kartu Kredit / Debit (' + count + " /4 Tersimpan)</th>";
+            for (i = 0; i < data.length; i++) {
+                var hiddenNumber = data[i].cardNumber;
+                let hiddenNumber2 = hiddenNumber.slice(0, -4);
+                let showNumbers = hiddenNumber.slice(-4);
+                let regMe = /[0-9]/g;
+                let allStars = hiddenNumber2.replace(regMe, "x");
+
+                str += "<tr>";
+                str += '<td style="height:20px; text-align:center;">' + allStars + showNumbers + "</td>";
+                str += '<td rowspan="2"><img src="/images/other.png" id="img' + i + '" style="padding:5px;">  </td>';
+                str += '<td rowspan="2" style="text-align:center;"><i class="fas fa-trash" style="color:deepskyblue" type="button"></i>  Hapus</td>';
+                str += "</tr>";
+                str += "<tr>";
+                str += "<td style='text-align:center;'>tanggal</td>";
+                str += "</tr>";
+            }
+            str += "</table>";
+            $("#ini").html(str);
+            for (i = 0; i < data.length; i++) {
+                var img = document.getElementById("img" + i);
+                var imageCode = data[i].cardNumber;
+                if (validateCreditCardNumber(imageCode)) {
+                    img.src = "/images/" + (cardType(imageCode) || "other") + ".png";
+                }
+            }
+        },
+    });
+
+    $.ajax({
+        url: "/api/customercard",
+        type: "get",
+        contentType: "application/json",
+        success: function (data) {
+            var str = '<table align="center" style="width:80%; margin-left:20px;" >';
+            str += "<tr>";
+            str += '<th style="color:deepskyblue">Dompet Sehat</th>';
+            str += "</tr>";
+            for (i = 0; i < data.length; i++) {}
+            str += "</table>";
+            $("#ini1").html(str);
+        },
+    });
+
+    function Tambah() {
+        var form = '<table class="table table-borderless">';
+        form += "<tr>";
+        form += '<td colspan="2"><label for="formGroupExampleInput">Nomor Kartu Kredit/Debit*</label>';
+        form += '<input class="form-control border border-info " placeholder="contoh: 1234 5678 9012 3456" type="text" id="card_number" required></td>';
+        form += "</tr>";
+        form += "<tr>";
+        form += '<td><label for="formGroupExampleInput">Masa Berlaku*</label>';
+        form += '<input class="form-control border border-info datepicker" id="validity_period" placeholder="mm / yy" name="datepicker"></td>';
+        form += '<td><label for="formGroupExampleInput">CVV*</label>';
+        form += '<input class="form-control border border-info" placeholder="contoh: 123" type="text" id="card_number" aria-required="true"></td>';
+        form += "</tr>";
+        form += "<tr>";
+        form += "<th>";
+        form += '<button class="btn btn-success text-center" onclick="SaveCustomerCard(this.value)">Simpan</button>';
+        form += '<button class="btn btn-secondary text-center" onclick="BackCourier()">Batal</button>';
+        form += "</th>";
+        form += "</tr>";
+        form += "</table>";
+
+        $(".modal-body").html(form);
+        $("#myModal").modal("show");
+    }
+
+    function SaveCustomerCard() {
+        var formData = "{";
+        formData += '"cardNumber":"' + $("#card_number").val() + '",';
+        formData += '"validityPeriod":"' + $("#validity_period").val() + '"';
+        formData += "}";
+        console.log(formData);
+        $.ajax({
+            url: "/api/customercard",
+            type: "post",
+            data: formData,
+            contentType: "application/json",
+            success: function (data) {
+                window.location.href = "/customercard/";
+            },
+        });
+    }
+
+    function validateCreditCardNumber(hiddenNumber) {
+        console.log("vad");
+        hiddenNumber = hiddenNumber.split(" ").join("");
+        if (parseInt(hiddenNumber) <= 0 || !/\d{15,16}(~W[a-zA-Z])*$/.test(hiddenNumber) || hiddenNumber.length > 16) {
+            return false;
+        }
+        var carray = new Array();
+        for (var i = 0; i < hiddenNumber.length; i++) {
+            carray[carray.length] = hiddenNumber.charCodeAt(i) - 48;
+        }
+        carray.reverse(); // luhn approaches number from the end
+        var sum = 0;
+        for (var i = 0; i < carray.length; i++) {
+            var tmp = carray[i];
+            if (i % 2 != 0) {
+                tmp *= 2;
+                if (tmp > 9) {
+                    tmp -= 9;
+                }
+            }
+            sum += tmp;
+        }
+        return sum % 10 == 0;
+    }
+    function cardType(hiddenNumber) {
+        hiddenNumber = hiddenNumber.split(" ").join("");
+        var o = {
+            electron: /^(4026|417500|4405|4508|4844|4913|4917)d+$/,
+            maestro: /^(5018|5020|5038|5612|5893|6304|6759|6761|6762|6763|0604|6390)\d+$/,
+            dankort: /^(5019)\d+$/,
+            interpayment: /^(636)\d+$/,
+            unionpay: /^(62|88)\d+$/,
+            visa: /^4[0-9]{12}(?:[0-9]{3})?$/,
+            mastercard: /^5[1-5][0-9]{14}$/,
+            amex: /^3[47][0-9]{13}$/,
+            diners: /^3(?:0[0-5]|[68][0-9])[0-9]{11}$/,
+            discover: /^6(?:011|5[0-9]{2})[0-9]{12}$/,
+            jcb: /^(?:2131|1800|35\d{3})\d{11}$/,
+        };
+        for (var k in o) {
+            if (o[k].test(hiddenNumber)) {
+                return k;
+            }
+        }
+        return null;
+    }
+</script>
+</body>
+</html>

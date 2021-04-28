@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:replace = "~{fragments/content :: title}">Title</title>
+
+    <th:block th:insert="~{fragments/head :: link}"></th:block>
+
+    <th:block th:insert="~{fragments/head :: head/script}"></th:block>
+
+</head>
+<body class="bg-light">
+    <div th:insert="~{fragments/navbar :: navbar}"></div>
+            <section class="heromed mt-5">
+            <div th:insert="~{fragments/content :: content}" ></div>
+            </section>
+
+    <footer th:insert="~{fragments/footer :: footer}" class="footer" />
+</body>
+</html>

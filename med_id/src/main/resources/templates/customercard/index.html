@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tindakan</title>
+    <title th:replace = "~{fragments/content :: title}">Title</title>
+
+    <th:block th:insert="~{fragments/head :: link}"></th:block>
+
+    <th:block th:insert="~{fragments/head :: head/script}"></th:block>
+</head>
+
+
+<body>
+<div th:insert="~{fragments/navbar :: navbar}"></div>
+<nav class="navbar navbar-light " style="background-color: #e3f2fd;">
+    <a class="navbar-brand ml-3" href="#" style="text-align: left;">Tindakan</a>
+</nav>
+
+<div class="container-fluid">
+    <div class="container col-md-12 mt-5">
+        <div class="row">
+            <!--Fitur Cari-->
+<!--            <div class="col-sm-4">-->
+<!--                <input class="form-control center" type="text" placeholder="Search by nama"-->
+<!--                       onkeyup="SearchEdu(this.value)" autocomplete="off">-->
+<!--            </div>-->
+            <div class="col-sm-8">
+                <!--Tombol Tambah-->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal"
+                        style="float: right;" tabindex="-1" aria-hidden="true" onclick="AddCard()"><i class="bi bi-plus"></i>Tambah</button>
+
+                <!--Modal Tambah-->
+                <div class="container mt-5">
+                    <!-- Modal -->
+                    <div class="modal fade" id="myModal" role="dialog">
+                        <div class="modal-dialog">
+
+                            <!-- Modal Content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="col-sm-8">
+                                        <h4 class="modal-title text-primary" style="text-align: left;">Tambah Kartu Kredit / Debit</h4>
+                                    </div>
+                                    <div class="col-sm-auto">
+                                        <button type="button" class="close" data-dismiss="modal"><i class="bi bi-x"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class="modal-body">
+
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="col text-center">
+                                    <button type="button" class="btn btn-outline-primary btn-lg"
+                                            data-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary btn-lg" id="SaveTreatment">Simpan</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container mt-5">
+                    <!-- Modal Ubah -->
+                    <div class="modal fade" id="myModal2" role="dialog">
+                        <div class="modal-dialog">
+
+                            <!-- Modal Content -->
+                            <div class="modal-content">
+                                <div class="modal-header" style="background-color: #e3f2fd;">
+                                    <div class="col-sm-4">
+                                        <h4 class="modal-title" style="text-align: left;">UBAH</h4>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                </div>
+
+                                <div class="modal-body">
+
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- <button type="button" class="btn btn-default btn-warning"
+                                        data-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary"
+                                        id="UpdateEducation">Simpan</button> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container mt-5">
+                    <!-- Modal Hapus -->
+                    <div class="modal fade" id="myModal3" role="dialog">
+                        <div class="modal-dialog">
+
+                            <!-- Modal content -->
+                            <div class="modal-content">
+                                <div class="modal-header" style="background-color: #e3f2fd;">
+                                    <div class="col-sm-4">
+                                        <h4 class="modal-title" style="text-align: left;">HAPUS!</h4>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                </div>
+
+                                <div class="modal-body">
+
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- <button type="button" class="btn btn-default btn-warning"
+                                        data-dismiss="modal">Tidak</button>
+                                    <button type="submit" class="btn btn-primary" onclick="IsDeleted()">Ya</button> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container col-md-12 mt-5" id="cardList"></div>
+    <!--/*@thymesVar id="pasienID" type=""*/-->
+    <input type="text" id="biodataIDPasien" th:value="${biodataIDPasien}">
+<!--    <input type="text" id="userIDPasien" th:value="${userIDPasien}">-->
+    <input type="text" id="customerIDPasien" th:value="${customerIDPasien}">
+
+
+
+</div>
+
+<script>
+
+//    function OpenList() {
+//        console.log("OpenList")
+        $.ajax({
+            url: '/api/customercard',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (data) {
+                           console.log("kartu", data)
+
+                var table = '<table class="table table-bordered">';
+                table += '<tr style="background-color: #e3f2fd;">';
+                table += '<th style="width:130px" class="text-center">Card Number</th>' +
+                    '<th style="width:80px" class="text-center">#</th>' +
+                    '</tr>';
+
+                for ( let i = 0; i < data.length; i++) {
+                    table += '<tr>';
+                    table += '<td style="width:130px" class="text-center">' + data[i].card_number + '</td>' +
+                        '<button class="btn btn-danger" value="' + data[i].id + '" onclick="Delete(this.value)">H</td>' +
+
+                        '</tr>';
+                }
+
+
+                table += '</table>';
+                $('#cardList').html(table);
+            }
+        });
+
+
+
+    // }
+
+function AddCard() {
+    var json = '<form id="registerForm">';
+    json += '<div class="formContainer">';
+    json += '<div class="form-group ">';
+    json += '<label for="cardNumber">Nomor Kartu Kredit / Debit*</label><br>';
+    json += '<input type="text" class="form-control border border-info" placeholder="contoh: 1234 5678 9012 3456" id="card_number" width="120" aria-required="true">';
+    json += '</div>';
+
+    json += '<div>';
+    json += '<img src="/img/visa.png " id="visa" class="md-3" width="30">';
+    json += '<img src="/img/mastercard.png" id="mastercard" class="md-3" width="40">';
+    json += '<img src="/img/amex.jpg" id="amex" class="md-3" width="30">';
+    json += '<img src="/img/jcb.png" id="jcb" class="md-3" width="40">';
+    json += '</div>';
+
+    json += '<div class="form-row mt-3">';
+    json += '<div class="col mb-3">';
+    json += '<label for="validity_period">Masa Berlaku</label><br>';
+    json += '<input type="text" class="form-control datepicker border border-info" placeholder="mm / yy" id="validity_period">';
+    json += '</div>';
+    json += '<div class="col mb-3">';
+    json += '<label for="name">CVV*</label><br>';
+    json += '<input type="text" class="form-control border border-info" placeholder="contoh: 123" id="cvv" width="120" aria-required="true">';
+    json += '</div>';
+
+    json += '</div>';
+    // json += '<div>';
+    // <!--            json += '<br><button id="Close" type="button" class="btn btn-warning" onclick="this.close()">Batal</button>';-->
+    // <!--            json += '<button id="Save" type="submit" class="btn btn-primary" onclick="SaveEducation(this.value)">Simpan</button>';-->
+    // json += '</div>';
+    json += '</div>';
+    json += '</form>';
+
+    $.ajax({
+        url: '/api/customercard',
+        type: 'GET',
+        contentType: 'application/json',
+        success: function (duplicate) {
+            console.log("duplicate", duplicate)
+
+            $('#SaveTreatment').click(function () {
+                let cardAdd = $('#card').val();
+
+                var current = new Date();
+                var yyyy = current.getFullYear();
+                var MM = String(current.getMonth() + 1).padStart(2, '0');
+                var dd = String(current.getDay()).padStart(2, '0');
+                var HH = current.getHours();
+                var mm = current.getMinutes();
+                var ss = current.getMinutes();
+
+                current = yyyy + '-' + MM + '-' + dd + ' ' + HH + ':' + mm + ':' + ss;
+
+                var validity =  new Date($('#validity_period').val());
+                var month = validity.getMonth();
+                var years = validity.getFullYear();
+                var coba = new Date( years.toString() +'-'+ month.toString() +  '-01' ).toISOString();
+                console.log("month", month)
+                console.log("years", years)
+                console.log("coba", coba)
+
+
+                console.log("date createdOn: ", current );
+                // console.log("valifity:," current1);
+
+                if (cardAdd != "") {
+
+                    var helper = 0;
+                    //
+                    //  for (i = 0; i < duplicate.length; i++) {
+                    //         console.log("duplicate.name.toLowerCase(): ", duplicate[i].name.toLowerCase());
+                    //         console.log("$('#name').val().toLowerCase(): ", $('#card').val().toLowerCase());
+                    //
+                    //     var check = duplicate[i].name.toLowerCase();
+                    //
+                    //     if (check == $('#card').val().toLowerCase()) {
+                    //         helper++;
+                    //         console.log("helper: ", helper);
+                    //     }
+                    // }
+
+                    if (helper == 0) {
+                        var jsonForm = '{';
+                        var date =
+                        jsonForm += '"customerId":' + $('#customerIDPasien').val() + ',';
+                        jsonForm += '"cardNumber":"' + $('#card_number').val() + '",';
+                        jsonForm += '"validityPeriod":"' + coba + '",';
+                        jsonForm += '"cvv":"' + $('#cvv').val() + '",';
+                        jsonForm += '"createdOn":"' + current + '",';
+                        jsonForm += '"createdBy":' + $('#customerIDPasien').val() + ',';
+                        jsonForm += '"isDelete":false';
+                        jsonForm += '}';
+
+                        console.log("save ", jsonForm)
+
+                        // $.ajax({
+                        //     url: '/api/customercard',
+                        //     type: 'POST',
+                        //     contentType: 'application/json',
+                        //     data: jsonForm,
+                        //     success: function (data) {
+                        //         console.log(data)
+                        //
+                        //         window.location = '/customercard/';
+                        //     }
+                        // });
+                    } else {
+                        window.alert("Tindakan telah ada");
+                    }
+                } else {
+                    window.alert("Nama harus diisi");
+                }
+            })
+        }
+    });
+
+    $('.modal-title').html();
+    $('.modal-body').html(json);
+    $('#myModal').modal('show');
+
+    $(function () {
+        $('.datepicker').datepicker({
+            format: 'mm-yy',
+            startView: 'months',
+            minViewMode: 'months'
+        });
+    });
+}
+// function SaveTreatment() {
+//
+//     var current = new Date();
+//     var yyyy = current.getFullYear();
+//     var MM = String(current.getMonth() + 1).padStart(2, '0');
+//     var dd = String(current.getDay()).padStart(2, '0');
+//     var HH = current.getHours();
+//     var mm = current.getMinutes();
+//     var ss = current.getMinutes();
+//
+//     current = yyyy + '-' + MM + '-' + dd + ' ' + HH + ':' + mm + ':' + ss;
+//     var jsonForm = '{';
+//     jsonForm += '"customerId":' + $('#customerID').val() + ',';
+//     jsonForm += '"card_number":"' + $('#card_number').val() + '",';
+//     jsonForm += '"validity_period":"' + $('#validity_period').val() + '",';
+//     jsonForm += '"cvv":"' + $('#cvv').val() + '",';
+//     jsonForm += '"createdOn":"' + current + '",';
+//     jsonForm += '"createdBy":' + $('#customerID').val() + ',';
+//     jsonForm += '"isDelete":false';
+//     jsonForm += '}';
+//
+//     $.ajax({
+//         url: '/api/customerregistered',
+//         type: 'POST',
+//         contentType: 'application/json',
+//         data: jsonForm,
+//         success: function (data) {
+//             window.location.href = '/customerregistered';
+//         }
+//     });
+// }
+//
+//
+// function Delete(id) {
+//     $.ajax({
+//         url: '/api/customer/customerregistered' + id,
+//         type: 'GET',
+//         contentType: 'application/json',
+//         success: function (data) {
+//             var prompt = '<p style="text-align: center;">Anda akan menghapus jenjang pendidikan ' + data.name + '? </p><br>';
+//             prompt += '<div class="buttons">';
+//             prompt += '<div class="action_btn">';
+//             prompt += '<button style="float: right; width: 70px;" type="submit" class="btn btn-primary" value="' + data.id + '" onclick="IsDeleted(this.value)">Ya</button>';
+//             prompt += '<button style="float: right; width: 70px;" type="button" class="btn btn-default btn-warning" data-dismiss="modal">Tidak</button>';
+//             prompt += '</div>';
+//             prompt += '</div>';
+//
+//             $('.modal-title').html("HAPUS!");
+//             $('.modal-body').html(prompt);
+//             $('#myModal3').modal('show');
+//         }
+//     });
+// }
+//
+// function IsDeleted(id) {
+//     var jsonForm = '{';
+//     jsonForm += '"doctorId":"1",';
+//     jsonForm += '"name":"' + $('#name').val() + '",';
+//     jsonForm += '"createdOn":"2021-03-25 13:33:40",';
+//     jsonForm += '"createdBy":"1",';
+//     jsonForm += '"modifiedOn":"2021-03-25 13:33:40",';
+//     jsonForm += '"modifiedBy":"1",';
+//     jsonForm += '"deletedOn":"2021-03-25 13:33:40",';
+//     jsonForm += '"deletedBy":"1",';
+//     jsonForm += '"isDelete":"true"';
+//     jsonForm += '}';
+//
+//     $.ajax({
+//         url: '/api/customer/customerregistered' + id,
+//         type: 'PUT',
+//         contentType: 'application/json',
+    //         data: jsonForm,
+    //         success: function (data) {
+    //             window.location.href = '/customersregistered/index';
+    //         }
+    //     });
+    // }
+    //
+    // $('#cardNumber').on('keyup', function(e){
+    //     var val = $(this).val();
+    //     var newval = '';
+    //     val = val.replace(/\s/g, '');
+    //     for(var i = 0; i < val.length; i++) {
+    //         if(i%4 == 0 && i > 0) newval = newval.concat(' ');
+    //         newval = newval.concat(val[i]);
+    //     }
+    //     $(this).val(newval);
+    // });
+
+function Logout()
+{
+    $.ajax({
+        url: '/logout',
+        contentType: 'application/json',
+        success: function (logout)
+        {
+            window.location.replace("/")
+        }
+    })
+}
+</script>
+</body>
+</html>

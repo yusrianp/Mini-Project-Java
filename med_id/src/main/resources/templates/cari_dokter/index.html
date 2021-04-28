@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cari Dokter</title>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css">
+
+
+</head>
+
+<body>
+    <nav class="navbar navbar-light " style="background-color: #e3f2fd;">
+        <a class="navbar-brand ml-3" href="#">Beranda/Cari Dokter</a>
+    </nav>
+    <div class="container-fluid">
+        <div class="container col-md-12 mt-5">
+            <div class="row">
+                <div class="col-sm-4">
+                    <input class="form-control center" type="text" placeholder="Search by nama"
+                        onkeyup="SearchRelation(this.value)" autocomplete="off">
+                </div>
+                <!-- <div class="col-sm-8">
+                    <button class="btn btn-primary" style="float: right;" onclick="AddForm()">Tambah</button>
+                </div> -->
+            </div>
+        </div>
+        <div class="container col-md-12 mt-5" id="dokterList">
+        </div>
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                    <button style="float: right;" onclick="BackWindow()">&times;</button>
+                </div>
+                <!-- <div class="modal-body"></div> -->
+                <form id="Save">
+                    <div class="form-group">
+                        <label>Konsultasi Untuk</label>
+                        <select class='form-control' id='konsultasi_untuk' required>
+                        </select><br>
+                        <label>Faskes*</label>
+                        <select class='form-control' id='doctor_office' required>
+                        </select>
+                        <small><i style='color: red;'>*Faskes harus di isi</i></small><br><br>
+                        <label>Waktu Kedatangan*</label>
+                        <div id='waktu'>
+                            <input class='form-control datepicker' type='text' id='waktu_kedatangan' autocomplete="off"
+                                disabled><br>
+                        </div>
+                        <label>Tindakan Medis</label>
+                        <div id='tindakan'>
+                            <select class='form-control' id='office_treatment' disabled>
+                            </select>
+                        </div>
+                        <p style="float: right;">
+                            <br><br><button onclick="BackWindow()" class="btn btn-warning mr-2">Kembali</button>
+                            <input class="btn btn-primary" type="submit" value="Buat Janji">
+
+                            <!-- <input type="submit" id="Save" class="btn btn-primary" value="Buat Janji"> -->
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="/js/jquery-3.5.1.min.js"></script>
+    <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.js">
+    </script>
+    <script>
+        $.ajax({
+            url: '/api/dokter',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (dokter) {
+                let table = "<table class='table table-striped'>"
+                table +=
+                    "<tr style='background-color: #e3f2fd;'> <th class='text-center'>NAMA</th><th class='text-center'>#</th> </tr>"
+                for (let i = 0; i < dokter.length; i++) {
+                    table += "<tr>"
+                    table += "<td class='text-center'>" + dokter[i].biodata.fullname + "</td>"
+                    table += "<td class='text-center'><button class='btn btn-primary mr-2' value='" +
+                        dokter[i].id + "' onclick='BuatJanji(this.value)'>Buat Janji</button> </td>"
+                    table += "</tr>"
+                }
+                table += "</table>";
+                $('#dokterList').html(table);
+            }
+        });
+
+        function BackWindow() {
+            window.location.href = '/cari_dokter'
+        }
+
+        function BuatJanji(dokterId) {
+            $('#myModal').modal('show')
+
+            $.ajax({
+                url: '/api/customer-member',
+                type: 'get',
+                contentType: 'application/json',
+                success: function (member) {
+                    console.log('ini adalah customer member', member)
+                    $.ajax({
+                        url: '/api/doctoroffice',
+                        type: 'get',
+                        contentType: 'application/json',
+                        success: function (doctoroffice) {
+
+
+                            console.log('ini adalah doctoroffice', doctoroffice)
+                            $.ajax({
+                                url: '/api/doctor-office-treatment',
+                                type: 'get',
+                                contentType: 'application/json',
+                                success: function (officetreatment) {
+                                    console.log('ini adalah office treatment',
+                                        officetreatment)
+
+                                    var konsultasi =
+                                        "<option value=''>--Pilih--</option>"
+                                    for (i = 0; i < member.length; i++) {
+                                        konsultasi += '<option value="' + member[i]
+                                            .customerId + '">' + member[i].customer
+                                            .biodata.fullname + ', ' + member[i]
+                                            .customerRelation.name + '</option>'
+                                    }
+                                    $('#konsultasi_untuk').html(konsultasi);
+
+                                    var office =
+                                        "<option value=''>--Pilih--</option>"
+                                    for (let i = 0; i < doctoroffice.length; i++) {
+                                        if (doctoroffice[i].doctorId == dokterId) {
+                                            office += '<option value="' +
+                                                doctoroffice[i].id + '">' +
+                                                doctoroffice[i].medicalFacility
+                                                .name + '</option>'
+                                        }
+                                    }
+
+                                    $('#doctor_office').html(office);
+
+                                    $('#doctor_office').on('change', function (e) {
+                                        console.log($('#doctor_office')
+                                            .val())
+
+                                        var datepicker =
+                                            "<input class='form-control datepicker' type='text' id='waktu_kedatangan' autocomplete='off' required><br>"
+                                        $('#waktu').html(datepicker);
+                                        var tindakan =
+                                            "<select class='form-control' id='office_treatment' required>"
+                                        $('#tindakan').html(tindakan);
+
+                                        $.ajax({
+                                            url: '/api/doctoroffice/' +
+                                                $('#doctor_office')
+                                                .val(),
+                                            type: 'get',
+                                            contentType: 'application/json',
+                                            success: function (
+                                                officedoctor) {
+
+                                                $.ajax({
+                                                    url: '/api/doctor-office-schedule',
+                                                    type: 'get',
+                                                    contentType: 'application/json',
+                                                    success: function (scheduledoctor) {
+                                                        var day = [0, 1, 2, 3, 4, 5, 6]
+                                                    var day2 = []
+                                                    var timestart = []
+                                                    var timesend = []
+
+                                                    for (let i = 0; i < scheduledoctor.length; i++) {
+                                                        if (officedoctor.doctorId == scheduledoctor[i].doctorId && officedoctor.medicalFacilityId == scheduledoctor[i].medicalFacilitySchedule.medical_facility_id) {
+
+                                                            console.log(scheduledoctor[i].medicalFacilitySchedule.day.toLowerCase())
+
+                                                            if (scheduledoctor[i].medicalFacilitySchedule.day.toLowerCase() == 'sunday') {
+
+                                                                console.log(scheduledoctor[i].medicalFacilitySchedule.day.toLowerCase())
+                                                                console.log('sama dengan')
+                                                                console.log('sunday')
+
+                                                                day2.push(0)
+
+                                                                timestart.push(scheduledoctor[i].medicalFacilitySchedule.timeScheduleStart)
+
+                                                                timesend.push(scheduledoctor[i].medicalFacilitySchedule.timeScheduleEnd)
+
+                                                            } else if (scheduledoctor[i].medicalFacilitySchedule.day.toLowerCase() == 'monday') {
+
+                                                                console.log(scheduledoctor[i].medicalFacilitySchedule.day.toLowerCase())
+                                                                console.log('sama dengan')
+                                                                console.log('monday')
+
+                                                                day2.push(1)
+
+                                                                timestart.push(scheduledoctor[i].medicalFacilitySchedule.timeScheduleStart)
+
+                                                                timesend.push(scheduledoctor[i].medicalFacilitySchedule.timeScheduleEnd)
+
+                                                            } else if (scheduledoctor[i].medicalFacilitySchedule.day.toLowerCase() == 'tuesday') {
+
+                                                                console.log(scheduledoctor[i].medicalFacilitySchedule.day.toLowerCase())
+                                                                console.log('sama dengan')
+                                                                console.log('tuesday')
+
+                                                                day2.push(2)
+
+                                                                timestart.push(scheduledoctor[i].medicalFacilitySchedule.timeScheduleStart)
+
+                                                                timesend.push(scheduledoctor[i].medicalFacilitySchedule.timeScheduleEnd)
+
+
+                                                            } else if (scheduledoctor[i].medicalFacilitySchedule.day.toLowerCase() == 'wednesday') {
+
+                                                                console.log(scheduledoctor[i].medicalFacilitySchedule.day.toLowerCase())
+                                                                console.log('sama dengan')
+                                                                console.log('wednesday')
+
+                                                                day2.push(3)
+
+                                                                timestart.push(scheduledoctor[i].medicalFacilitySchedule.timeScheduleStart)
+
+                                                                timesend.push(scheduledoctor[i].medicalFacilitySchedule.timeScheduleEnd)
+
+
+                                                            } else if (scheduledoctor[i].medicalFacilitySchedule.day.toLowerCase() == 'thursday') {
+
+                                                                console.log(scheduledoctor[i].medicalFacilitySchedule.day.toLowerCase())
+                                                                console.log('sama dengan')
+                                                                console.log('thursday')
+
+                                                                day2.push(4)
+
+                                                                timestart.push(scheduledoctor[i].medicalFacilitySchedule.timeScheduleStart)
+
+                                                                timesend.push(scheduledoctor[i].medicalFacilitySchedule.timeScheduleEnd)
+
+
+                                                            } else if (scheduledoctor[i].medicalFacilitySchedule.day.toLowerCase() == 'friday') {
+
+                                                                console.log(scheduledoctor[i].medicalFacilitySchedule.day.toLowerCase())
+                                                                console.log('sama dengan')
+                                                                console.log('friday')
+
+                                                                day2.push(5)
+
+                                                                timestart.push(scheduledoctor[i].medicalFacilitySchedule.timeScheduleStart)
+
+                                                                timesend.push(scheduledoctor[i].medicalFacilitySchedule.timeScheduleEnd)
+
+
+                                                            } else if(scheduledoctor[i].medicalFacilitySchedule.day.toLowerCase() == 'saturday'){
+
+                                                                console.log(scheduledoctor[i].medicalFacilitySchedule.day.toLowerCase())
+                                                                console.log('sama dengan')
+                                                                console.log('saturday')
+
+                                                                day2.push(6)
+
+                                                                timestart.push(scheduledoctor[i].medicalFacilitySchedule.timeScheduleStart)
+
+                                                                timesend.push(scheduledoctor[i].medicalFacilitySchedule.timeScheduleEnd)
+
+                                                            }else{
+                                                                console.log('ada yang error')
+                                                            }
+                                                        }
+                                                    }
+
+
+                                                    console.log(day2)
+                                                    console.log(timestart)
+                                                    console.log(timesend)
+
+                                                    var day3 = day.filter(function (x) {
+                                                        return day2.indexOf(x) < 0;
+                                                    });
+
+
+                                                    var logic = function (currentDateTime) {
+                                                        // 'this' is jquery object datetimepicker
+
+                                                        for (let i = 0; i < day2.length; i++) {
+                                                            if (currentDateTime.getDay() == day2[i]) {
+                                                                var index = day2.indexOf(day2[i]);
+
+                                                                this.setOptions({
+                                                                    minTime: timestart[index],
+                                                                    maxTime: timesend[index]
+                                                                });
+                                                            }
+                                                        }
+
+                                                    };
+
+                                                    $('.datepicker').datetimepicker({
+                                                        format: 'Y/m/d H:i',
+                                                        changeYear: true,
+                                                        changeMonth: true,
+                                                        step: 30,
+                                                        disabledWeekDays: day3,
+                                                        // timepicker: false
+                                                        // minTime: start,
+                                                        // maxTime: end
+                                                        onChangeDateTime: logic,
+                                                        onShow: logic
+                                                    });
+                                                    $('.datepicker')
+                                                    }
+                                                })
+
+                                            }
+                                        })
+                                        
+                                        treatment = "<option value=''>--Pilih--</option>"
+                                        for (i = 0; i < officetreatment.length; i++) {
+                                            if(officetreatment[i].doctorOfficeId == $('#doctor_office').val()){
+                                                treatment += '<option value="' + officetreatment[i].id + '">' + officetreatment[i].doctorTreatment.name +'</option>'
+                                            }
+                                        }
+                                        $('#tindakan #office_treatment').html(treatment);
+                                    })
+
+                                    // var holidays = ['2021/04/20', '2021/04/21']
+
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+
+        }
+
+         $.ajax({
+            url: '/api/appointment',
+            type: 'get',
+            contentType: 'application/json',
+            success: function (appointment) {
+                var helper = 0;
+                for (let i = 0; i < appointment.length; i++) {
+                    console.log('ini adalah appointment id ', appointment[i].id)
+                    console.log('ini adalah doctor_office_schedule id ', appointment[i].doctorOfficeScheduleId)
+                    helper++
+                }
+                console.log('jumlah appointment yang tersimpan adalah : ', helper)
+
+            }
+        })
+
+        $('#Save').on('submit', function (e) {
+            console.log('ini adalah triger submit janji')
+
+            $.ajax({
+                url: '/api/doctor-office-schedule',
+                type: 'get',
+                contentType: 'application/json',
+                success: function (schedule) {
+                    $.ajax({
+                        url: '/api/doctoroffice/' + $('#doctor_office').val(),
+                        type: 'get',
+                        contentType: 'application/json',
+                        success: function (office) {
+                            $.ajax({
+                                url: '/api/appointment',
+                                type: 'get',
+                                contentType: 'application/json',
+                                success: function (appointment) {
+
+                                    var days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                                    var d = new Date($('#waktu_kedatangan').val());
+                                    var dayName = days[d.getDay()];
+
+                                    console.log(dayName)
+
+
+                                    for (let i = 0; i < schedule.length; i++) {
+                                        if (office.doctorId == schedule[i].doctorId && office.medicalFacilityId == schedule[i].medicalFacilitySchedule.medical_facility_id && schedule[i].medicalFacilitySchedule.day.toLowerCase() == dayName) {
+
+                                            $.ajax({
+                                                url: '/api/doctor-office-schedule/' + schedule[i].id,
+                                                type: 'get',
+                                                contentType: 'application/json',
+                                                success: function (officeschedule) {
+
+                                                    console.log('ini adalah id customer', $('#konsultasi_untuk').val())
+                                                    console.log('ini adalah id doctor office', office.id)
+                                                    console.log('ini adalah waktu kedatangan', $('#waktu_kedatangan').val())
+                                                    console.log('ini adalah id doctor office treatment', $('#office_treatment').val())
+                                                    console.log('ini adalah id doctor office schedule', officeschedule.id)
+
+
+
+                                                    var splitarray = new Array();
+                                                    splitarray = $('#waktu_kedatangan').val().split(" ");
+
+                                                    var countSLot = 0
+                                                    var countSameDate = 0
+
+                                                    for (let i = 0; i < appointment.length; i++) {
+
+                                                        var dateappointment = new Array();
+
+                                                        dateappointment = appointment[i].AppointmentDate.split(" ")
+
+                                                        console.log(officeschedule.id)
+                                                        console.log('sama dengan')
+                                                        console.log(appointment[i].doctorOfficeScheduleId)
+
+                                                        console.log(splitarray[0])
+                                                        console.log('sama dengan')
+                                                        console.log(dateappointment[0])
+
+                                                        if (officeschedule.id == appointment[i].doctorOfficeScheduleId && splitarray[0] == dateappointment[0]) {
+                                                            countSLot++
+
+                                                            // if ($('#waktu_kedatangan').val() == appointment[i].AppointmentDate) {
+                                                            //     countSameDate++
+                                                            //     console.log('ini adalah waktu yang di imputkan ', $('#waktu_kedatangan').val())
+                                                            //     console.log('ini adalah waktu kedatangan pasien', appointment[i].AppointmentDate)
+                                                            // }
+                                                        }
+
+                                                        // if (officeschedule.id == appointment[i].doctorOfficeScheduleId && $('#waktu_kedatangan').val() == appointment[i].AppointmentDate) {
+                                                        //     countSameDate++
+                                                        //     console.log()
+                                                        // }
+
+                                                    }
+
+                                                    console.log('ini adalah janji yang berhasil di buat pada tanggal ini', countSLot)
+                                                    console.log('ini adalah slot dokter yang tersedia pada tanggal ini', officeschedule.slot)
+
+
+                                                    if (countSLot < officeschedule.slot) {
+                                                        let formData = '{';
+                                                        formData += '"customerId":' + $('#konsultasi_untuk').val() + ',';
+                                                        formData += '"doctorOfficeId":' + office.id + ',';
+                                                        formData += '"AppointmentDate":"' + $('#waktu_kedatangan').val() + '",';
+                                                        formData += '"doctorOfficeTreatmentId":' + $('#office_treatment').val() + ',';
+                                                        formData += '"doctorOfficeScheduleId":' + officeschedule.id + '';
+                                                        formData += '}';
+
+
+                                                        $.ajax({
+                                                            url: '/api/appointment',
+                                                            type: 'post',
+                                                            contentType: 'application/json',
+                                                            data: formData,
+                                                            success: function (data) {
+                                                                alert('Rencana kedatangan anda sudah tersimpan, anda dapat mengubah atau membatalkan janji di rencana kedatangan')
+                                                            }
+                                                        })
+                                                    }
+                                                    else {
+                                                        alert('Mohon maaf, waktu kedatangan yang anda pilih sudah terisi penuh. silahkan pilih waktu kedatangan atau faskes yang lain')
+                                                    }
+
+                                                }
+                                            })
+
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                    })
+
+                }
+            })
+
+            e.preventDefault();
+        })
+
+
+
+
+        // function SearchRelation(request) {
+        //     //console.log(request)
+
+        //     if (request.length > 0) {
+        //         $.ajax({
+        //             url: '/api/searchrelation/' + request,
+        //             type: 'GET',
+        //             contentType: 'application/json',
+        //             success: function (relation) {
+        //                 //console.log(result)
+        //                 let table = "<table class='table table-striped'>"
+        //                 table +=
+        //                     "<tr style='background-color: #e3f2fd;'><th class='text-center'>NAMA</th><th class='text-center'>#</th></tr>"
+        //                 if (relation.length > 0) {
+        //                     for (let i = 0; i < relation.length; i++) {
+        //                         table += "<tr>";
+        //                         table += "<td class='text-center'>" + relation[i].name + "</td>"
+        //                         table +=
+        //                             "<td class='text-center'><button class='btn btn-primary mr-2' value='" +
+        //                             relation[i].id +
+        //                             "' onclick='FormEdit(this.value)'>U</button> <button class='btn btn-danger' value='" +
+        //                             relation[i].id + "' onclick='Delete(this.value)'>H</button> </td>"
+        //                         table += "</tr>"
+        //                     }
+        //                 } else {
+        //                     table += "<tr class='text-center'>"
+        //                     table += "<td colspan='4' class='text-center'>No data</td>";
+        //                     table += "</tr>"
+        //                 }
+        //                 table += "</table>"
+        //                 $('#relationList').html(table);
+        //             }
+        //         });
+        //     } else {
+        //         window.location.href = '/admin/relation'
+        //     }
+        // }
+
+        // function Delete(id) {
+        //     $.ajax({
+        //         url: '/api/relation/' + id,
+        //         type: 'GET',
+        //         contentType: 'application/json',
+        //         success: function (relation) {
+        //             let table = "<p>"
+        //             table += "Anda akan menghapus " + relation.name + " ?"
+        //             table += "</p>"
+        //             table += "<p style='float: right;'>"
+        //             table += "<button class='btn btn-warning mr-2'  onclick='BackWindow()'>Tidak</button>"
+        //             table += "<button class='btn btn-primary' value='" + relation.id +
+        //                 "' onclick='AgreeDelete(this.value)'>Ya</button>"
+        //             table += "</p>"
+        //             $('.modal-title').html("HAPUS !");
+        //             $('.modal-body').html(table);
+        //             $('#myModal').modal('show')
+        //         }
+        //     })
+        // }
+
+        // function AgreeDelete(id) {
+        //     $.ajax({
+        //         url: '/api/relation/' + id,
+        //         type: 'GET',
+        //         contentType: 'application/json',
+        //         success: function (relation) {
+        //             let formData = '{';
+        //             formData += '"createdOn":"' + relation.createdOn + '",';
+        //             formData += '"createdBy":"' + relation.createdBy + '",';
+        //             formData += '"name":"' + relation.name + '",';
+        //             formData += '"delete":"' + relation.delete + '"';
+        //             formData += '}';
+
+        //             $.ajax({
+        //                 url: '/api/deleterelation/' + id,
+        //                 type: 'PUT',
+        //                 contentType: 'application/json',
+        //                 data: formData,
+        //                 success: function (data) {
+        //                     window.location.href = '/admin/relation'
+        //                 }
+        //             });
+        //         }
+        //     });
+        // }
+
+        // function EditForm(id) {
+        //     $.ajax({
+        //         url: '/api/relation/' + id,
+        //         type: 'GET',
+        //         contentType: 'application/json',
+        //         success: function (data) {
+        //             let form = '<form class="needs-validation" >';
+        //             form += '<div class="form-row">'
+        //             form += '<div class="form-group mb-2">'
+        //             form += '<label>Nama*</label>'
+        //             form += '<input type="text" class="form-control mt-2" value="' + data.name +
+        //                 '" id="name" required>'
+        //             form += '</div>'
+        //             form += '</div>'
+        //             form += '<p style="float: right;">'
+        //             form += '<button class="btn btn-warning mr-2" onclick="BackWindow()">Batal</button>'
+        //             form += '<input type="submit" id="updateForm" class="btn btn-primary" value="Save">'
+        //             form += '</p>'
+        //             form += '</form>'
+        //             $('.modal-title').html("UBAH");
+        //             $('.modal-body').html(form);
+        //             $('#myModal').modal('show')
+
+        //             $('#updateForm').click(function () {
+        //                 var name = $("#name").val();
+        //                 console.log(name)
+        //                 if (name != "") {
+        //                     let formData = '{';
+        //                     formData += '"createdOn":"' + data.createdOn + '",';
+        //                     formData += '"createdBy":"' + data.createdBy + '",';
+        //                     formData += '"deleteOn":"' + data.deleteOn + '",';
+        //                     formData += '"deletedBy":"' + data.deletedBy + '",';
+        //                     formData += '"name":"' + name + '",';
+        //                     formData += '"delete":"' + data.delete + '"';
+        //                     formData += '}';
+
+        //                     $.ajax({
+        //                         url: '/api/relation/' + id,
+        //                         type: 'PUT',
+        //                         contentType: 'application/json',
+        //                         data: formData,
+        //                         success: function (data) {
+        //                             window.location.href = '/admin/relation'
+        //                         }
+        //                     })
+        //                 }
+
+        //             })
+        //         }
+        //     })
+        // }
+
+        // function BackWindow() {
+        //     window.location.href = '/admin/relation'
+        // }
+
+        // function AddForm() {
+        //     let form = '<form class="needs-validation" >';
+        //     form += '<div class="form-row">'
+        //     form += '<div class="form-group mb-2">'
+        //     form += '<label for="inputEmail4">Nama*</label>'
+        //     form += '<input type="text" class="form-control mt-2" id="add_name" required>'
+        //     form += '</div>'
+        //     form += '</div>'
+        //     form += '<p style="float: right;">'
+        //     form += '<button class="btn btn-warning mr-2" onclick="BackWindow()">Batal</button>'
+        //     form += '<input type="submit" id="addSave" class="btn btn-primary" value="Save">'
+        //     form += '</p>'
+        //     form += '</form>'
+        //     $('.modal-title').html("TAMBAH")
+        //     $('.modal-body').html(form)
+        //     $('#myModal').modal('show')
+
+        //     $('#addSave').click(function () {
+        //         $.ajax({
+        //             url: '/api/relation',
+        //             type: 'GET',
+        //             contentType: 'application/json',
+        //             success: function (relation) {
+        //                 var name = $("#add_name").val().toLowerCase();
+
+        //                 if (name != "") {
+        //                     var count = 0 ; 
+        //                     for (i = 0; i < relation.length; i++) {
+        //                         if(name == relation[i].name.toLowerCase() )
+        //                         {
+        //                             count += 1; 
+        //                             var notif = alert("nama sudah ada");
+        //                             if(notif){
+        //                                 BackWindow();
+        //                             }
+        //                         }
+        //                     } 
+        //                     if(count == 0){
+        //                         let formData = '{';
+        //                         formData += '"name":"' + name + '"';
+        //                         formData += '}';
+
+        //                         $.ajax({
+        //                             url: '/api/relation',
+        //                             type: 'POST',
+        //                             contentType: 'application/json',
+        //                             data: formData,
+        //                             success: function (data) {
+        //                                 BackWindow();
+        //                             }
+        //                         })
+        //                     }        
+        //                 }
+        //             }
+        //         })
+        //     })
+        // }
+    </script>
+</body>
+
+</html>

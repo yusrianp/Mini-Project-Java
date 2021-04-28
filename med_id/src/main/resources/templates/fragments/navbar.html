@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <nav th:fragment="navbar" class="navbar py-4 navbar-expand-lg navbar-light" style="background-color: #c3f0ff;">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="/img/logo.png" width="187" alt="">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <input class="form-control outline-primary me-3 border border-info" type="search" placeholder="Cari Dokter atau Faskes" aria-label="Search">
+                <button class="btn btn-primary" type="submit" style="margin-left: 18px"><i class="bi bi-search"></i></button>
+                <ul class="navbar-nav ml-auto">
+                    <a sec:authorize="isAnonymous()" type="button"  class="btn btn-outline-primary" data-toggle="modal" data-target="#registerModal" style="margin-left: 20px ">Daftar</a>
+                    <a sec:authorize="isAnonymous()" type="button"  class="btn btn-primary" data-toggle="modal" data-target="#loginModal" style="margin-left: 20px">Masuk</a>
+                    <div sec:authorize="isAuthenticated()" class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 20px">
+                            Hi, <span th:if="${firstName != null}" th:utext="${firstName}"></span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" style="cursor: pointer;" onclick="Logout()">Log Out</a>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+</body>
+</html>

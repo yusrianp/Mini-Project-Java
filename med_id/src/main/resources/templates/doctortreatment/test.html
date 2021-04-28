@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tindakan</title>
+    <link rel="stylesheet" href="/css/bootstrap.css" />
+    <script src="/js/jquery-3.5.1.min.js"></script>
+    <script src="/js/bootstrap.js"></script>
+
+
+    <!-- Modal w3school -->
+    <link href="/buttonModalsCSS/buttonsModals.css" rel="stylesheet">
+    </link>
+</head>
+
+<body>
+<nav class="navbar navbar-light " style="background-color: #e3f2fd;">
+    <a class="navbar-brand ml-3" href="#" style="text-align: left;">Tindakan</a>
+</nav>
+
+<div class="container-fluid">
+    <div class="container col-md-12 mt-5">
+        <div class="row">
+            <!--Fitur Cari-->
+            <div class="col-sm-4">
+                <input class="form-control center" type="text" placeholder="Search by nama"
+                       onkeyup="SearchEdu(this.value)" autocomplete="off">
+            </div>
+            <div class="col-sm-8">
+                <!--Tombol Tambah-->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal"
+                        style="float: right;" tabindex="-1" aria-hidden="true" onclick="AddTreatment()">Tambah</button>
+                <button class="btn btn-primary"oncLick="OpenList()">Open List</button>
+
+                <!--Modal Tambah-->
+                <div class="container mt-5">
+                    <!-- Modal -->
+                    <div class="modal fade" id="myModal" role="dialog">
+                        <div class="modal-dialog">
+
+                            <!-- Modal Content-->
+                            <div class="modal-content">
+                                <div class="modal-header" style="background-color: #e3f2fd;">
+                                    <div class="col-sm-4">
+                                        <h4 class="modal-title" style="text-align: left;">Tambah Tindakan</h4>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                </div>
+
+                                <div class="modal-body">
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default btn-warning"
+                                            data-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary" id="SaveTreatment">Simpan</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- <div class="modal" id="myModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div style="background-color: #e3f2fd;" class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button><br>
+                                    <h4 class="modal-title" style="text-align: left;">Tambah</h4>
+                                </div>
+                                <div class="modal-body"></div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-warning"
+                                        data-dismiss="&times;">Batal</button>
+                                    <button type="submit" class="btn btn-primary"
+                                        onclick="SaveEducation()">Simpan</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+
+                <div class="container mt-5">
+                    <!-- Modal Ubah -->
+                    <div class="modal fade" id="myModal2" role="dialog">
+                        <div class="modal-dialog">
+
+                            <!-- Modal Content -->
+                            <div class="modal-content">
+                                <div class="modal-header" style="background-color: #e3f2fd;">
+                                    <div class="col-sm-4">
+                                        <h4 class="modal-title" style="text-align: left;">UBAH</h4>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                </div>
+
+                                <div class="modal-body">
+
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- <button type="button" class="btn btn-default btn-warning"
+                                        data-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary"
+                                        id="UpdateEducation">Simpan</button> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container mt-5">
+                    <!-- Modal Hapus -->
+                    <div class="modal fade" id="myModal3" role="dialog">
+                        <div class="modal-dialog">
+
+                            <!-- Modal content -->
+                            <div class="modal-content">
+                                <div class="modal-header" style="background-color: #e3f2fd;">
+                                    <div class="col-sm-4">
+                                        <h4 class="modal-title" style="text-align: left;">HAPUS!</h4>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                </div>
+
+                                <div class="modal-body">
+
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- <button type="button" class="btn btn-default btn-warning"
+                                        data-dismiss="modal">Tidak</button>
+                                    <button type="submit" class="btn btn-primary" onclick="IsDeleted()">Ya</button> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container col-md-12 mt-5" id="doctorList"></div>
+
+
+
+</div>
+
+<script>
+
+    function OpenList() {
+        console.log("OpenList")
+        $.ajax({
+            url: '/api/treatment/doctortreatment',
+            type: 'get',
+            contentType: 'application/json',
+            success: function (data) {
+                <!--            console.log(doctortreatment);-->
+
+                var table = '<table class="table table-bordered">';
+                table += '<tr style="background-color: #e3f2fd;">';
+                table += '<th style="width:130px" class="text-center">NAMA</th>' +
+                    '<th style="width:80px" class="text-center">#</th>' +
+                    '</tr>';
+
+                for ( let i = 0; i < data.length; i++) {
+                    table += '<tr>';
+                    table += '<td style="width:130px" class="text-center">' + data[i].name + '</td>' +
+                        '<td style="width:80px" class="text-center"><button class="btn btn-primary mr-2" value="' + data[i].id + '" onclick="Edit(this.value)">U' +
+                        '<button class="btn btn-danger" value="' + data[i].id + '" onclick="Delete(this.value)">H</td>' +
+                        '</tr>';
+                }
+
+
+                table += '</table>';
+                $('#doctorList').html(table);
+            }
+        });
+    }
+
+    function AddTreatment() {
+        var json = '<form id="registerForm">';
+        json += '<div class="formContainer">';
+        json += '<div class="form-group">';
+        json += '<label for="name">Tindakan *</label><br>';
+        json += '<input type="text" class="form-control" id="name" width="120" aria-required="true">';
+        json += '</div>';
+        json += '<div>';
+        json += '</div>';
+        json += '</div>';
+        json += '</form>';
+
+        $('#SaveTreatment').click(function () {
+            let nameAdd = $('#name').val();
+            <!--               let doctorIdAdd = $('#doctor_id').val();-->
+
+            if (nameAdd != "") {
+                let jsonForm = '{';
+                jsonForm += '"doctorId":"1",';
+                jsonForm += '"name":"' + $('#name').val() + '",';
+                jsonForm += '"createdOn":"2021-03-25 13:33:40",';
+                jsonForm += '"createdBy":"1",';
+                jsonForm += '"isDelete":"false"';
+                jsonForm += '}';
+
+                <!--console.log(jsonForm)-->
+
+                $.ajax({
+                    url: '/api/treatment/doctortreatment',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: jsonForm,
+                    success: function (data) {
+                        window.location.href = '/doctortreatment/index';
+                    }
+                });
+            } else {
+                window.alert("Nama harus diisi");
+            }
+        });
+
+        $('.modal-title').html("TAMBAH");
+        $('.modal-body').html(json);
+        $('#myModal').modal('show');
+    }
+
+    function SaveTreatment() {
+        var jsonForm = '{';
+        jsonForm += '"doctorId":"1",';
+        jsonForm += '"name":"' + $('#name').val() + '",';
+        jsonForm += '"createdOn":"2021-03-25 13:33:40",';
+        jsonForm += '"createdBy":"1",';
+        jsonForm += '"isDelete":"false"';
+        jsonForm += '}';
+
+        $.ajax({
+            url: '/api/treatment/doctortreatment',
+            type: 'POST',
+            contentType: 'application/json',
+            data: jsonForm,
+            success: function (data) {
+                window.location.href = '/doctortreatment/index';
+            }
+        });
+    }
+
+
+    function Delete(id) {
+        $.ajax({
+            url: '/api/treatment/doctortreatment/' + id,
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (data) {
+                var prompt = '<p style="text-align: center;">Anda akan menghapus jenjang pendidikan ' + data.name + '? </p><br>';
+                prompt += '<div class="buttons">';
+                prompt += '<div class="action_btn">';
+                prompt += '<button style="float: right; width: 70px;" type="submit" class="btn btn-primary" value="' + data.id + '" onclick="IsDeleted(this.value)">Ya</button>';
+                prompt += '<button style="float: right; width: 70px;" type="button" class="btn btn-default btn-warning" data-dismiss="modal">Tidak</button>';
+                prompt += '</div>';
+                prompt += '</div>';
+
+                $('.modal-title').html("HAPUS!");
+                $('.modal-body').html(prompt);
+                $('#myModal3').modal('show');
+            }
+        });
+    }
+
+    function IsDeleted(id) {
+        var jsonForm = '{';
+        jsonForm += '"doctorId":"1",';
+        jsonForm += '"name":"' + $('#name').val() + '",';
+        jsonForm += '"createdOn":"2021-03-25 13:33:40",';
+        jsonForm += '"createdBy":"1",';
+        jsonForm += '"modifiedOn":"2021-03-25 13:33:40",';
+        jsonForm += '"modifiedBy":"1",';
+        jsonForm += '"deletedOn":"2021-03-25 13:33:40",';
+        jsonForm += '"deletedBy":"1",';
+        jsonForm += '"isDelete":"true"';
+        jsonForm += '}';
+
+        $.ajax({
+            url: '/api/treatment/doctortreatment/' + id,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: jsonForm,
+            success: function (data) {
+                window.location.href = '/doctortreatment/index';
+            }
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tab Alamat</title>
+    <link href="/indra/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-light " style="background-color: #e3f2fd;">
+        <a class="navbar-brand ml-3" href="#">TAB ALAMAT</a>
+    </nav>
+    <div class="container-fluid">
+        <div class="container col-md-12 mt-5">
+            <div class="row">
+                <div class="col-sm-4">
+                    <input class="form-control center" type="text" placeholder="Cari alamat atau nama penerima"
+                        onkeyup="SearchBy(this.value,0,3)" autocomplete="off">
+                </div>
+                <div class=" row col-sm-2">
+                    <select id="inputState" class="form-select">
+                        <option value="label">Label Alamat</option>
+                        <option value="recipient">Penerima</option>
+                        <option value="address">Alamat</option>
+                    </select>
+                </div><br><br><br>
+            </div>
+            <div class="row">
+                <div class="col-sm-2">
+                    <button class="btn btn-danger" id="multipledelete">Hapus</button>
+                </div>
+                <div class="col-sm-8">
+                    <div class="col-sm-2" style="float: right;">
+                        <select id="inputdsc" class="form-select ">
+                            <option value="asc">A-Z</option>
+                            <option value="dsc">Z-A</option>
+                        </select>
+                    </div>
+                    <!-- <div class="col-sm-2" style="float: right;">
+                        <div id="sebelahtambah"></div>
+                    </div> -->
+                </div>
+                <div class="col-sm-2">
+                    <div class="input-group">
+                        <span class="input-group-text" id="sebelahtambah"></span>
+                        <button class="btn btn-primary" style="float: right;" onclick="AddForm()">Tambah</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="container col-md-12 mt-5" id="bioaddress">
+        </div>
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                    <button style="float: right;" onclick="BackWindow()">&times;</button>
+                </div>
+                <div class="modal-body"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="/indra/js/jquery-3.5.1.min.js"></script>
+    <script src="/indra/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // $.ajax({
+        //     url: '/api/biodataaddress',
+        //     type: 'GET',
+        //     contentType: 'application/json',
+        //     success: function (bioaddress) {
+        //         $.ajax({
+        //             url: '/api/location',
+        //             type: 'GET',
+        //             contentType: 'application/json',
+        //             success: function (location) {
+        //                 form = '<from>'
+        //                 for (let i = 0; i < bioaddress.length; i++) {
+        //                     console.log(bioaddress[i].id)
+        //                     // // console.log(bioaddress[i].location.id)
+        //                     form += '<div class="checkbox">'
+        //                     form += '<input  id="' + bioaddress[i].id + '"  class="box" value="' + bioaddress[i].id + '" type="checkbox" /> '
+        //                     form += '<label for="box"> ' + bioaddress[i].label + '</label><br>'
+        //                     form += '<label for="box"> ' + bioaddress[i].recipient + ',</label>'
+        //                     form += '<label for="box"> ' + bioaddress[i].recipientPhoneNumber + '</label><br>'
+        //                     form += '<label for="box">' + bioaddress[i].address + '</label>'
+        //                     form += '<label for="box">,' + bioaddress[i].location.name + '</label>'
+        //                     // console.log(bioaddress[i].location.parentId)
+        //                     if (bioaddress[i].location.parentId != null) {
+        //                         for (let j = 0; j < location.length; j++) {
+        //                             console.log(bioaddress[i].location.parentId)
+        //                             console.log('ini adalah id location', location[j].id)
+        //                             if (bioaddress[i].location.parentId == location[j].id) {
+        //                                 console.log(location[j].name)
+        //                                 form += '<label for="box">,' + location[j].name + '</label>'
+        //                             }
+        //                         }
+        //                     }
+
+        //                     form += '<p style="float: right;">'
+        //                     form += '<button class="btn btn-primary mr-2" value="' + bioaddress[i].id + '" onclick="EditForm(this.value)">Ubah</button>'
+        //                     form += '<button class="btn btn-danger" value="' + bioaddress[i].id + '" onclick="Delete(this.value)">Hapus</button>'
+        //                     form += '</p>'
+        //                     form += '</div><br><br>'
+        //                 }
+        //                 form += '</form>'
+        //                 $('#bioaddress').html(form);
+        //             }
+        //         })
+        //     }
+        // });
+
+
+        $('#multipledelete').click(function () {
+            var checks = $("input[type='checkbox']:checked"); // returns object of checkeds.
+            if (checks.length != 0) {
+
+                $.ajax({
+                    url: '/api/biodataaddress',
+                    type: 'GET',
+                    contentType: 'application/json',
+                    success: function (aaddress) {
+                        let table = "<p>"
+                        table += "Anda yakin ingin menghapus alamat<br><br>"
+                        for (let i = 0; i < checks.length; i++) {
+                            for (let j = 0; j < aaddress.length; j++) {
+                                if ($(checks[i]).val() == aaddress[j].id) {
+                                    table += "" + aaddress[j].label + "<br>"
+                                }
+                            }
+                        }
+                        table += "<br>Anda tidak dapat mengembalikan alamat yang sudah di hapus"
+                        table += "</p>"
+                        table += "<p style='float: right;'>"
+                        table +=
+                            "<button class='btn btn-warning mr-2'  onclick='BackWindow()'>Tidak</button>"
+                        table += "<button class='btn btn-primary' onclick='DeleteAll()'>Ya</button>"
+                        table += "</p>"
+                        $('.modal-title').html("Hapus Alamat");
+                        $('.modal-body').html(table);
+                        $('#myModal').modal('show')
+                    }
+                })
+            } else {
+                let table = "<p>"
+                table += "<br>Anda harus memilih alamat yang ingin di hapus"
+                table += "</p>"
+                table += "<p style='float: right;'>"
+                table += "<button class='btn btn-warning mr-2'  onclick='BackWindow()'>Kembali</button>"
+                table += "</p>"
+                $('.modal-title').html("Hapus Alamat");
+                $('.modal-body').html(table);
+                $('#myModal').modal('show')
+            }
+
+        })
+
+        function DeleteAll() {
+            var checks1 = $("input[type='checkbox']:checked"); // returns object of checkeds.
+            for (let i = 0; i < checks1.length; i++) {
+                AgreeDelete($(checks1[i]).val())
+            }
+        }
+
+        function SearchBy(request, currentPage, length) {
+
+            let keyword = request;
+
+            console.log(request)
+
+            if (request.length > 0) {
+                $.ajax({
+                    url: '/api/searchbio?keyword=' + request + '&page=' + currentPage + '&size=' + length,
+                    type: 'get',
+                    contentType: 'application/json',
+                    success: function (data) {
+
+                        console.log(data.biodataAddress.length)
+
+                        for (let i = 0; i < data.biodataAddress.length; i++) {
+                            console.log(data.biodataAddress[i][0].id)
+                        }
+                        console.log('ini adalah data', data.biodataAddress)
+
+
+                        $.ajax({
+                            url: '/api/location',
+                            type: 'GET',
+                            contentType: 'application/json',
+                            success: function (location) {
+
+                                form = '<from>'
+                                for (let i = 0; i < data.biodataAddress.length; i++) {
+                                    form += '<div class="checkbox">'
+                                    form += '<input  id="' + data.biodataAddress[i][0].id +
+                                        '"  class="box" value="' + data.biodataAddress[i][0]
+                                        .id + '" type="checkbox" /> '
+                                    form += '<label for="box"> ' + data.biodataAddress[i][0]
+                                        .label + '</label><br>'
+                                    form += '<label for="box"> ' + data.biodataAddress[i][0]
+                                        .recipient + ',</label>'
+                                    form += '<label for="box"> ' + data.biodataAddress[i][0]
+                                        .recipientPhoneNumber + '</label><br>'
+                                    form += '<label for="box">' + data.biodataAddress[i][0]
+                                        .address + '</label>'
+                                    form += '<label for="box">,' + data.biodataAddress[i][1]
+                                        .name + '</label>'
+                                    if (data.biodataAddress[i][1].parentId != null) {
+                                        for (let j = 0; j < location.length; j++) {
+                                            console.log(data.biodataAddress[i][1].parentId)
+                                            // console.log('ini adalah id location', location[j].id)
+                                            if (data.biodataAddress[i][1].parentId == location[
+                                                    j].id) {
+                                                console.log(location[j].name)
+                                                form += '<label for="box">,' + location[j]
+                                                    .name + '</label>'
+                                            }
+                                        }
+                                    }
+
+                                    form += '<p style="float: right;">'
+                                    form += '<button class="btn btn-primary mr-2" value="' +
+                                        data.biodataAddress[i][0].id +
+                                        '" onclick="EditForm(this.value)">Ubah</button>'
+                                    form += '<button class="btn btn-danger" value="' + data
+                                        .biodataAddress[i][0].id +
+                                        '" onclick="Delete(this.value)">Hapus</button>'
+                                    form += '</p>'
+                                    form += '</div><br><br>'
+                                }
+                                form += '</form><br><br>'
+
+                                form += '<nav aria-label="Page navigation">';
+                                form += '<ul class="pagination" style="float: right;">'
+
+                                form +=
+                                    '<li class="page-item"><a class="page-link" onclick="SearchBy(\'' +
+                                    request + '\',' + (data.currentPage - 1) + ',' + length +
+                                    ')">Previous</a></li>'
+                                let index = 1;
+                                for (let i = 0; i < data.totalPages; i++) {
+                                    form +=
+                                        '<li class="page-item"><a id="pageslink" class="page-link" onclick="SearchBy(\'' +
+                                        request + '\',' + i + ',' + length + ')">' + index +
+                                        '</a></li>'
+                                    index++;
+                                }
+                                if (data.currentPage + 1 == data.totalPages) {
+                                    form +=
+                                        '<li class="page-item disabled"><a class="page-link" onclick="SearchBy(\'' +
+                                        request + '\',' + (data.currentPage + 1) + ',' +
+                                        length + ')">Next</a></li>'
+
+                                } else {
+                                    form +=
+                                        '<li class="page-item"><a class="page-link" onclick="SearchBy(\'' +
+                                        request + '\',' + (data.currentPage + 1) + ',' +
+                                        length + ')">Next</a></li>'
+
+                                }
+                                form += '</ul>'
+                                form += '</nav>';
+                                $('#bioaddress').html(form);
+                            }
+                        })
+                    }
+                })
+
+            } else {
+                OpenList(0, 3);
+            }
+        }
+
+
+        function Delete(id) {
+            console.log(id)
+            $.ajax({
+                url: '/api/aaddress/' + id,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (aaddress) {
+                    let table = "<p>"
+                    table += "Anda yakin ingin menghapus ?"
+                    table += "</p>"
+                    table += "<p style='float: right;'>"
+                    table += "<button class='btn btn-warning mr-2'  onclick='BackWindow()'>Tidak</button>"
+                    table += "<button class='btn btn-primary' value='" + aaddress.id +
+                        "' onclick='AgreeDelete(this.value)'>Ya</button>"
+                    table += "</p>"
+                    $('.modal-title').html("HAPUS !");
+                    $('.modal-body').html(table);
+                    $('#myModal').modal('show')
+                }
+            })
+        }
+
+        function AgreeDelete(id) {
+            console.log(id)
+            $.ajax({
+                url: '/api/aaddress/' + id,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (delaaddress) {
+                    let formData = '{';
+                    formData += '"createdOn":"' + delaaddress.createdOn + '",';
+                    formData += '"createdBy":' + delaaddress.createdBy + ',';
+                    formData += '"biodataId":' + delaaddress.biodataId + ',';
+                    formData += '"label":"' + delaaddress.label + '",';
+                    formData += '"recipient":"' + delaaddress.recipient + '",';
+                    formData += '"recipientPhoneNumber":"' + delaaddress.recipientPhoneNumber + '",';
+                    formData += '"locationId":' + delaaddress.locationId + ',';
+                    formData += '"postalCode":"' + delaaddress.postalCode + '",';
+                    formData += '"address":"' + delaaddress.address + '"';
+                    formData += '}';
+
+                    $.ajax({
+                        url: '/api/delaaddress/' + id,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: formData,
+                        success: function (data) {
+                            window.location.href = '/tabalamat/index'
+                        }
+                    });
+                }
+            });
+        }
+
+        $.ajax({
+            url: '/api/biodataaddress',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (bioaddress) {
+
+                jumlahbio = 0
+                for (let i = 0; i < bioaddress.length; i++) {
+                    jumlahbio++
+                }
+
+                form = jumlahbio
+                $('#sebelahtambah').html(form);
+
+
+            }
+        })
+
+        function EditForm(id) {
+            console.log(id)
+            $.ajax({
+                url: '/api/aaddress/' + id,
+                type: 'get',
+                contentType: 'application/json',
+                success: function (aaddress) {
+                    $.ajax({
+                        url: '/api/location',
+                        type: 'GET',
+                        contentType: 'application/json',
+                        success: function (location) {
+                            $.ajax({
+                                url: '/api/biodataaddress',
+                                type: 'GET',
+                                contentType: 'application/json',
+                                success: function (bioaddress) {
+                                    let form =
+                                        '<form class="needs-validation" id="updateForm">';
+                                    form += '<div class="form-row">'
+                                    form += '<div class="form-group mb-2">'
+                                    form +=
+                                        '<label for="label_alamat">Label Alamat*</label>'
+                                    form +=
+                                        '<input type="text" class="form-control mt-2" value="' +
+                                        aaddress.label +
+                                        '" id="label_alamat" required>'
+                                    form += '</div>'
+                                    form += '<div class="form-group mb-2">'
+                                    form +=
+                                        '<label for="nama_penerima">Nama Penerima*</label>'
+                                    form += '<input type="text" value="' + aaddress
+                                        .recipient +
+                                        '" class="form-control mt-2" id="nama_penerima" required>'
+                                    form += '</div>'
+                                    form += '<div class="form-group mb-2">'
+                                    form +=
+                                        '<label for="nomor_hp">Nomor Hp Penerima*</label>'
+                                    form += '<input type="text" value="' + aaddress
+                                        .recipientPhoneNumber +
+                                        '" class="form-control mt-2" id="nomor_hp" required>'
+                                    form += '</div>'
+                                    form += '<div class="form-group mb-2">'
+                                    form +=
+                                        '<label for="kecamatan_kota">Kecamatan / Kota*</label>'
+                                    form +=
+                                        '<select class="form-control" id="kecamatan_kota" required>'
+                                    form +=
+                                        '<option selected disabled hidden>cari kecamatan/kota</option>'
+                                    for (let i = 0; i < location.length; i++) {
+                                        if (location[i].id == aaddress.locationId) {
+                                            selected = "selected"
+
+                                        } else {
+                                            selected = ""
+
+                                        }
+                                        form += "<option value='" + location[i].id +
+                                            "' " + selected + ">" + location[i]
+                                            .name + "</option>"
+                                    }
+                                    form += "</select>"
+                                    form += '</div>'
+                                    form += '<div class="form-group mb-2">'
+                                    form += '<label for="kode_pos">Kode Pos</label>'
+                                    form += '<input type="text" value="' + aaddress
+                                        .postalCode +
+                                        '" class="form-control mt-2" id="kode_pos" >'
+                                    form += '</div>'
+                                    form += '<div class="form-group mb-2">'
+                                    form += '<label for="alamat">Alamat*</label>'
+                                    form +=
+                                        '<textarea class="form-control" id="alamat" required>' +
+                                        aaddress.address + '</textarea>'
+                                    console.log(aaddress.address)
+                                    form += '</div>'
+                                    form += '</div><br><br>'
+                                    form += '<p style="float: right;">'
+                                    form +=
+                                        '<button class="btn btn-warning mr-2" onclick="BackWindow()">Batal</button>'
+                                    form +=
+                                        '<input class="btn btn-primary"  type="submit" value="Simpan" >'
+                                    form += '</p>'
+                                    form += '</form>'
+                                    $('.modal-title').html("Edit Alamat")
+                                    $('.modal-body').html(form)
+                                    $('#myModal').modal('show')
+
+                                    var labelarray = []
+                                    for (let i = 0; i < bioaddress.length; i++) {
+                                        if (aaddress.label.toLowerCase() !=
+                                            bioaddress[i].label.toLowerCase()) {
+                                            labelarray.push(bioaddress[i].label)
+                                        }
+                                    }
+
+
+
+                                    console.log(labelarray)
+
+                                    $('#updateForm').on('submit', function (e) {
+
+
+
+                                        var helper = 0;
+                                        for (let i = 0; i < labelarray
+                                            .length; i++) {
+                                            if ($('#label_alamat').val()
+                                                .toLowerCase() ==
+                                                labelarray[i].toLowerCase()
+                                            ) {
+                                                helper++
+                                            }
+                                        }
+                                        console.log(
+                                            'ini adalah jumlah yang sama',
+                                            helper)
+                                        if (helper == 0) {
+                                            let formData = '{';
+                                            formData += '"createdOn":"' +
+                                                aaddress.createdOn + '",';
+                                            formData += '"createdBy":' +
+                                                aaddress.createdBy + ',';
+                                            formData += '"biodataId":' +
+                                                aaddress.biodataId + ',';
+                                            formData += '"label":"' + $(
+                                                    '#label_alamat').val() +
+                                                '",';
+                                            formData += '"recipient":"' + $(
+                                                    '#nama_penerima')
+                                                .val() + '",';
+                                            formData +=
+                                                '"recipientPhoneNumber":"' +
+                                                $('#nomor_hp').val() + '",';
+                                            formData += '"locationId":' + $(
+                                                    '#kecamatan_kota')
+                                                .val() + ',';
+                                            formData += '"postalCode":"' +
+                                                $('#kode_pos').val() + '",';
+                                            formData += '"address":"' + $(
+                                                '#alamat').val() + '"';
+                                            formData += '}';
+                                            console.log(formData)
+
+                                            $.ajax({
+                                                url: '/api/aaddress/' +
+                                                    id,
+                                                type: 'PUT',
+                                                contentType: 'application/json',
+                                                data: formData,
+                                                success: function (
+                                                    data) {
+                                                    window
+                                                        .location
+                                                        .href =
+                                                        '/tabalamat/index'
+                                                }
+                                            })
+                                        } else {
+                                            alert('Label Sudah Ada')
+                                        }
+                                        e.preventDefault();
+                                    })
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        }
+
+        function BackWindow() {
+            window.location.href = '/tabalamat/index'
+        }
+
+
+        function AddForm() {
+            $.ajax({
+                url: '/api/location',
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (location) {
+                    $.ajax({
+                        url: '/api/biodataaddress',
+                        type: 'GET',
+                        contentType: 'application/json',
+                        success: function (bioaddress) {
+                            let form = '<form class="needs-validation" id="Save">';
+                            form += '<div class="form-row">'
+                            form += '<div class="form-group mb-2">'
+                            form += '<label for="label_alamat">Label Alamat*</label>'
+                            form +=
+                                '<input type="text" class="form-control mt-2" id="label_alamat" required>'
+                            form += '</div>'
+                            form += '<div class="form-group mb-2">'
+                            form += '<label for="nama_penerima">Nama Penerima*</label>'
+                            form +=
+                                '<input type="text" class="form-control mt-2" id="nama_penerima" required>'
+                            form += '</div>'
+                            form += '<div class="form-group mb-2">'
+                            form += '<label for="nomor_hp">Nomor Hp Penerima*</label>'
+                            form +=
+                                '<input type="text" class="form-control mt-2" id="nomor_hp" required>'
+                            form += '</div>'
+                            form += '<div class="form-group mb-2">'
+                            form += '<label for="kecamatan_kota">Kecamatan / Kota*</label>'
+                            form += '<select class="form-control" id="kecamatan_kota" required>'
+                            form += '<option value="">cari kecamatan/kota</option>'
+                            for (let i = 0; i < location.length; i++) {
+                                form += "<option value='" + location[i].id + "'>" + location[i]
+                                    .name + "</option>"
+                            }
+                            form += "</select>"
+                            form += '</div>'
+                            form += '<div class="form-group mb-2">'
+                            form += '<label for="kode_pos">Kode Pos</label>'
+                            form +=
+                                '<input type="text" class="form-control mt-2" id="kode_pos" required>'
+                            form += '</div>'
+                            form += '<div class="form-group mb-2">'
+                            form += '<label for="alamat">Alamat*</label>'
+                            form +=
+                                '<textarea class="form-control" id="alamat" placeholder="Form isian" required></textarea>'
+                            form += '</div>'
+                            form += '</div><br><br>'
+                            form += '<p style="float: right;">'
+                            form +=
+                                '<button class="btn btn-warning mr-2" onclick="BackWindow()">Batal</button>'
+                            form +=
+                                '<input class="btn btn-primary" type="submit" value="Simpan" >'
+                            form += '</p>'
+                            form += '</form>'
+                            $('.modal-title').html("Tambah Alamat")
+                            $('.modal-body').html(form)
+                            $('#myModal').modal('show')
+
+                            $('#Save').on('submit', function (e) {
+                                console.log('ini adalah triger submit save')
+
+
+                                var count = 0;
+                                for (let i = 0; i < bioaddress.length; i++) {
+                                    if ($('#label_alamat').val().toLowerCase() ==
+                                        bioaddress[i].label.toLowerCase()) {
+                                        count++
+                                    }
+                                }
+
+                                if (count == 0) {
+                                    let formData = '{';
+                                    formData += '"label":"' + $('#label_alamat').val() +
+                                        '",';
+                                    formData += '"recipient":"' + $('#nama_penerima')
+                                        .val() + '",';
+                                    formData += '"recipientPhoneNumber":"' + $(
+                                        '#nomor_hp').val() + '",';
+                                    formData += '"locationId":' + $('#kecamatan_kota')
+                                        .val() + ',';
+                                    formData += '"postalCode":"' + $('#kode_pos')
+                                        .val() + '",';
+                                    formData += '"address":"' + $('#alamat').val() +
+                                        '"';
+                                    formData += '}';
+
+                                    console.log(formData)
+
+                                    $.ajax({
+                                        url: '/api/biodataaddress',
+                                        type: 'POST',
+                                        contentType: 'application/json',
+                                        data: formData,
+                                        success: function (data) {
+                                            window.location.href =
+                                                '/tabalamat/index'
+                                        }
+                                    })
+                                } else {
+                                    alert('Label Sudah Ada')
+                                }
+                                e.preventDefault();
+                            })
+                        }
+                    })
+                }
+            })
+        }
+
+        // $.ajax({
+        //     success: function (bioaddress) {
+        //         OpenList(0, 3);
+        //     }
+        // });
+
+        function OpenList(currentPage, length) {
+            $.ajax({
+                url: '/api/dressmapped?page=' + currentPage + '&size=' + length,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log(data)
+                    $.ajax({
+                        url: '/api/location',
+                        type: 'GET',
+                        contentType: 'application/json',
+                        success: function (location) {
+
+                            form = '<from>'
+                            for (let i = 0; i < data.biodataAddress.length; i++) {
+                                console.log("ini adalah biodata adress id :", data
+                                    .biodataAddress[i].id)
+                                form += '<div class="checkbox">'
+                                form += '<input  id="' + data.biodataAddress[i].id +
+                                    '"  class="box" value="' + data.biodataAddress[i].id +
+                                    '" type="checkbox" /> '
+                                form += '<label for="box"> ' + data.biodataAddress[i].label +
+                                    '</label><br>'
+                                form += '<label for="box"> ' + data.biodataAddress[i]
+                                    .recipient + ',</label>'
+                                form += '<label for="box"> ' + data.biodataAddress[i]
+                                    .recipientPhoneNumber + '</label><br>'
+                                form += '<label for="box">' + data.biodataAddress[i].address +
+                                    '</label>'
+                                form += '<label for="box">,' + data.biodataAddress[i].location
+                                    .name + '</label>'
+                                // console.log(bioaddress[i].location.parentId)
+                                if (data.biodataAddress[i].location.parentId != null) {
+                                    for (let j = 0; j < location.length; j++) {
+                                        console.log(data.biodataAddress[i].location.parentId)
+                                        console.log('ini adalah id location', location[j].id)
+                                        if (data.biodataAddress[i].location.parentId ==
+                                            location[j].id) {
+                                            console.log(location[j].name)
+                                            form += '<label for="box">,' + location[j].name +
+                                                '</label>'
+                                        }
+                                    }
+                                }
+
+                                form += '<p style="float: right;">'
+                                form += '<button class="btn btn-primary mr-2" value="' + data
+                                    .biodataAddress[i].id +
+                                    '" onclick="EditForm(this.value)">Ubah</button>'
+                                form += '<button class="btn btn-danger" value="' + data
+                                    .biodataAddress[i].id +
+                                    '" onclick="Delete(this.value)">Hapus</button>'
+                                form += '</p>'
+                                form += '</div><br><br>'
+                            }
+                            form += '</form><br><br>'
+
+                            form += '<nav aria-label="Page navigation">';
+                            form += '<ul class="pagination" style="float: right;">'
+
+                            form +=
+                                '<li class="page-item"><a class="page-link" onclick="OpenList(' +
+                                (data.currentPage - 1) + ',' + length + ')">Previous</a></li>'
+                            let index = 1;
+                            for (let i = 0; i < data.totalPages; i++) {
+                                form +=
+                                    '<li class="page-item"><a id="pageslink" class="page-link" onclick="OpenList(' +
+                                    i + ',' + length + ')">' + index + '</a></li>'
+                                index++;
+                            }
+                            if (data.currentPage + 1 == data.totalPages) {
+                                form +=
+                                    '<li class="page-item disabled"><a class="page-link" onclick="OpenList(' +
+                                    (data.currentPage + 1) + ',' + length + ')">Next</a></li>'
+
+                            } else {
+                                form +=
+                                    '<li class="page-item"><a class="page-link" onclick="OpenList(' +
+                                    (data.currentPage + 1) + ',' + length + ')">Next</a></li>'
+
+                            }
+                            form += '</ul>'
+                            form += '</nav>';
+                            $('#bioaddress').html(form);
+                        }
+                    })
+                }
+            });
+        }
+
+        function OpenListDesc(currentPage, length) {
+            $.ajax({
+                url: '/api/dressmappeddesc?page=' + currentPage + '&size=' + length,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log(data)
+                    $.ajax({
+                        url: '/api/location',
+                        type: 'GET',
+                        contentType: 'application/json',
+                        success: function (location) {
+
+                            form = '<from>'
+                            for (let i = 0; i < data.biodataAddress.length; i++) {
+                                console.log("ini adalah biodata adress id :", data
+                                    .biodataAddress[i].id)
+                                form += '<div class="checkbox">'
+                                form += '<input  id="' + data.biodataAddress[i].id +
+                                    '"  class="box" value="' + data.biodataAddress[i].id +
+                                    '" type="checkbox" /> '
+                                form += '<label for="box"> ' + data.biodataAddress[i].label +
+                                    '</label><br>'
+                                form += '<label for="box"> ' + data.biodataAddress[i]
+                                    .recipient + ',</label>'
+                                form += '<label for="box"> ' + data.biodataAddress[i]
+                                    .recipientPhoneNumber + '</label><br>'
+                                form += '<label for="box">' + data.biodataAddress[i].address +
+                                    '</label>'
+                                form += '<label for="box">,' + data.biodataAddress[i].location
+                                    .name + '</label>'
+                                // console.log(bioaddress[i].location.parentId)
+                                if (data.biodataAddress[i].location.parentId != null) {
+                                    for (let j = 0; j < location.length; j++) {
+                                        console.log(data.biodataAddress[i].location.parentId)
+                                        console.log('ini adalah id location', location[j].id)
+                                        if (data.biodataAddress[i].location.parentId ==
+                                            location[j].id) {
+                                            console.log(location[j].name)
+                                            form += '<label for="box">,' + location[j].name +
+                                                '</label>'
+                                        }
+                                    }
+                                }
+
+                                form += '<p style="float: right;">'
+                                form += '<button class="btn btn-primary mr-2" value="' + data
+                                    .biodataAddress[i].id +
+                                    '" onclick="EditForm(this.value)">Ubah</button>'
+                                form += '<button class="btn btn-danger" value="' + data
+                                    .biodataAddress[i].id +
+                                    '" onclick="Delete(this.value)">Hapus</button>'
+                                form += '</p>'
+                                form += '</div><br><br>'
+                            }
+                            form += '</form><br><br>'
+
+                            form += '<nav aria-label="Page navigation">';
+                            form += '<ul class="pagination" style="float: right;">'
+
+                            form +=
+                                '<li class="page-item"><a class="page-link" onclick="OpenList(' +
+                                (data.currentPage - 1) + ',' + length + ')">Previous</a></li>'
+                            let index = 1;
+                            for (let i = 0; i < data.totalPages; i++) {
+                                form +=
+                                    '<li class="page-item"><a id="pageslink" class="page-link" onclick="OpenList(' +
+                                    i + ',' + length + ')">' + index + '</a></li>'
+                                index++;
+                            }
+                            if (data.currentPage + 1 == data.totalPages) {
+                                form +=
+                                    '<li class="page-item disabled"><a class="page-link" onclick="OpenList(' +
+                                    (data.currentPage + 1) + ',' + length + ')">Next</a></li>'
+
+                            } else {
+                                form +=
+                                    '<li class="page-item"><a class="page-link" onclick="OpenList(' +
+                                    (data.currentPage + 1) + ',' + length + ')">Next</a></li>'
+
+                            }
+                            form += '</ul>'
+                            form += '</nav>';
+                            $('#bioaddress').html(form);
+                        }
+                    })
+                }
+            });
+        }
+
+        function OpenListRecipient(currentPage, length) {
+            $.ajax({
+                url: '/api/recipientmapped?page=' + currentPage + '&size=' + length,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log(data)
+                    $.ajax({
+                        url: '/api/location',
+                        type: 'GET',
+                        contentType: 'application/json',
+                        success: function (location) {
+
+                            form = '<from>'
+                            for (let i = 0; i < data.biodataAddress.length; i++) {
+                                console.log("ini adalah biodata adress id :", data
+                                    .biodataAddress[i].id)
+                                form += '<div class="checkbox">'
+                                form += '<input  id="' + data.biodataAddress[i].id +
+                                    '"  class="box" value="' + data.biodataAddress[i].id +
+                                    '" type="checkbox" /> '
+                                form += '<label for="box"> ' + data.biodataAddress[i].label +
+                                    '</label><br>'
+                                form += '<label for="box"> ' + data.biodataAddress[i]
+                                    .recipient + ',</label>'
+                                form += '<label for="box"> ' + data.biodataAddress[i]
+                                    .recipientPhoneNumber + '</label><br>'
+                                form += '<label for="box">' + data.biodataAddress[i].address +
+                                    '</label>'
+                                form += '<label for="box">,' + data.biodataAddress[i].location
+                                    .name + '</label>'
+                                // console.log(bioaddress[i].location.parentId)
+                                if (data.biodataAddress[i].location.parentId != null) {
+                                    for (let j = 0; j < location.length; j++) {
+                                        console.log(data.biodataAddress[i].location.parentId)
+                                        console.log('ini adalah id location', location[j].id)
+                                        if (data.biodataAddress[i].location.parentId ==
+                                            location[j].id) {
+                                            console.log(location[j].name)
+                                            form += '<label for="box">,' + location[j].name +
+                                                '</label>'
+                                        }
+                                    }
+                                }
+
+                                form += '<p style="float: right;">'
+                                form += '<button class="btn btn-primary mr-2" value="' + data
+                                    .biodataAddress[i].id +
+                                    '" onclick="EditForm(this.value)">Ubah</button>'
+                                form += '<button class="btn btn-danger" value="' + data
+                                    .biodataAddress[i].id +
+                                    '" onclick="Delete(this.value)">Hapus</button>'
+                                form += '</p>'
+                                form += '</div><br><br>'
+                            }
+                            form += '</form><br><br>'
+
+                            form += '<nav aria-label="Page navigation">';
+                            form += '<ul class="pagination" style="float: right;">'
+
+                            form +=
+                                '<li class="page-item"><a class="page-link" onclick="OpenListRecipient(' +
+                                (data.currentPage - 1) + ',' + length + ')">Previous</a></li>'
+                            let index = 1;
+                            for (let i = 0; i < data.totalPages; i++) {
+                                form +=
+                                    '<li class="page-item"><a id="pageslink" class="page-link" onclick="OpenListRecipient(' +
+                                    i + ',' + length + ')">' + index + '</a></li>'
+                                index++;
+                            }
+                            if (data.currentPage + 1 == data.totalPages) {
+                                form +=
+                                    '<li class="page-item disabled"><a class="page-link" onclick="OpenList(' +
+                                    (data.currentPage + 1) + ',' + length + ')">Next</a></li>'
+
+                            } else {
+                                form +=
+                                    '<li class="page-item"><a class="page-link" onclick="OpenList(' +
+                                    (data.currentPage + 1) + ',' + length + ')">Next</a></li>'
+
+                            }
+                            form += '</ul>'
+                            form += '</nav>';
+                            $('#bioaddress').html(form);
+                        }
+                    })
+                }
+            });
+
+        }
+
+        function OpenListRecipientDesc(currentPage, length) {
+            $.ajax({
+                url: '/api/recipientmappeddesc?page=' + currentPage + '&size=' + length,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log(data)
+                    $.ajax({
+                        url: '/api/location',
+                        type: 'GET',
+                        contentType: 'application/json',
+                        success: function (location) {
+
+                            form = '<from>'
+                            for (let i = 0; i < data.biodataAddress.length; i++) {
+                                console.log("ini adalah biodata adress id :", data
+                                    .biodataAddress[i].id)
+                                form += '<div class="checkbox">'
+                                form += '<input  id="' + data.biodataAddress[i].id +
+                                    '"  class="box" value="' + data.biodataAddress[i].id +
+                                    '" type="checkbox" /> '
+                                form += '<label for="box"> ' + data.biodataAddress[i].label +
+                                    '</label><br>'
+                                form += '<label for="box"> ' + data.biodataAddress[i]
+                                    .recipient + ',</label>'
+                                form += '<label for="box"> ' + data.biodataAddress[i]
+                                    .recipientPhoneNumber + '</label><br>'
+                                form += '<label for="box">' + data.biodataAddress[i].address +
+                                    '</label>'
+                                form += '<label for="box">,' + data.biodataAddress[i].location
+                                    .name + '</label>'
+                                // console.log(bioaddress[i].location.parentId)
+                                if (data.biodataAddress[i].location.parentId != null) {
+                                    for (let j = 0; j < location.length; j++) {
+                                        console.log(data.biodataAddress[i].location.parentId)
+                                        console.log('ini adalah id location', location[j].id)
+                                        if (data.biodataAddress[i].location.parentId ==
+                                            location[j].id) {
+                                            console.log(location[j].name)
+                                            form += '<label for="box">,' + location[j].name +
+                                                '</label>'
+                                        }
+                                    }
+                                }
+
+                                form += '<p style="float: right;">'
+                                form += '<button class="btn btn-primary mr-2" value="' + data
+                                    .biodataAddress[i].id +
+                                    '" onclick="EditForm(this.value)">Ubah</button>'
+                                form += '<button class="btn btn-danger" value="' + data
+                                    .biodataAddress[i].id +
+                                    '" onclick="Delete(this.value)">Hapus</button>'
+                                form += '</p>'
+                                form += '</div><br><br>'
+                            }
+                            form += '</form><br><br>'
+
+                            form += '<nav aria-label="Page navigation">';
+                            form += '<ul class="pagination" style="float: right;">'
+
+                            form +=
+                                '<li class="page-item"><a class="page-link" onclick="OpenListRecipient(' +
+                                (data.currentPage - 1) + ',' + length + ')">Previous</a></li>'
+                            let index = 1;
+                            for (let i = 0; i < data.totalPages; i++) {
+                                form +=
+                                    '<li class="page-item"><a id="pageslink" class="page-link" onclick="OpenListRecipient(' +
+                                    i + ',' + length + ')">' + index + '</a></li>'
+                                index++;
+                            }
+                            if (data.currentPage + 1 == data.totalPages) {
+                                form +=
+                                    '<li class="page-item disabled"><a class="page-link" onclick="OpenList(' +
+                                    (data.currentPage + 1) + ',' + length + ')">Next</a></li>'
+
+                            } else {
+                                form +=
+                                    '<li class="page-item"><a class="page-link" onclick="OpenList(' +
+                                    (data.currentPage + 1) + ',' + length + ')">Next</a></li>'
+
+                            }
+                            form += '</ul>'
+                            form += '</nav>';
+                            $('#bioaddress').html(form);
+                        }
+                    })
+                }
+            });
+
+        }
+
+        function OpenListAddress(currentPage, length) {
+            $.ajax({
+                url: '/api/addressmapped?page=' + currentPage + '&size=' + length,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log(data)
+                    $.ajax({
+                        url: '/api/location',
+                        type: 'GET',
+                        contentType: 'application/json',
+                        success: function (location) {
+
+                            form = '<from>'
+                            for (let i = 0; i < data.biodataAddress.length; i++) {
+                                console.log("ini adalah biodata adress id :", data
+                                    .biodataAddress[i].id)
+                                form += '<div class="checkbox">'
+                                form += '<input  id="' + data.biodataAddress[i].id +
+                                    '"  class="box" value="' + data.biodataAddress[i].id +
+                                    '" type="checkbox" /> '
+                                form += '<label for="box"> ' + data.biodataAddress[i].label +
+                                    '</label><br>'
+                                form += '<label for="box"> ' + data.biodataAddress[i]
+                                    .recipient + ',</label>'
+                                form += '<label for="box"> ' + data.biodataAddress[i]
+                                    .recipientPhoneNumber + '</label><br>'
+                                form += '<label for="box">' + data.biodataAddress[i].address +
+                                    '</label>'
+                                form += '<label for="box">,' + data.biodataAddress[i].location
+                                    .name + '</label>'
+                                // console.log(bioaddress[i].location.parentId)
+                                if (data.biodataAddress[i].location.parentId != null) {
+                                    for (let j = 0; j < location.length; j++) {
+                                        console.log(data.biodataAddress[i].location.parentId)
+                                        console.log('ini adalah id location', location[j].id)
+                                        if (data.biodataAddress[i].location.parentId ==
+                                            location[j].id) {
+                                            console.log(location[j].name)
+                                            form += '<label for="box">,' + location[j].name +
+                                                '</label>'
+                                        }
+                                    }
+                                }
+
+                                form += '<p style="float: right;">'
+                                form += '<button class="btn btn-primary mr-2" value="' + data
+                                    .biodataAddress[i].id +
+                                    '" onclick="EditForm(this.value)">Ubah</button>'
+                                form += '<button class="btn btn-danger" value="' + data
+                                    .biodataAddress[i].id +
+                                    '" onclick="Delete(this.value)">Hapus</button>'
+                                form += '</p>'
+                                form += '</div><br><br>'
+                            }
+                            form += '</form><br><br>'
+
+                            form += '<nav aria-label="Page navigation">';
+                            form += '<ul class="pagination" style="float: right;">'
+
+                            form +=
+                                '<li class="page-item"><a class="page-link" onclick="OpenListAddress(' +
+                                (data.currentPage - 1) + ',' + length + ')">Previous</a></li>'
+                            let index = 1;
+                            for (let i = 0; i < data.totalPages; i++) {
+                                form +=
+                                    '<li class="page-item"><a id="pageslink" class="page-link" onclick="OpenListAddress(' +
+                                    i + ',' + length + ')">' + index + '</a></li>'
+                                index++;
+                            }
+                            if (data.currentPage + 1 == data.totalPages) {
+                                form +=
+                                    '<li class="page-item disabled"><a class="page-link" onclick="OpenList(' +
+                                    (data.currentPage + 1) + ',' + length + ')">Next</a></li>'
+
+                            } else {
+                                form +=
+                                    '<li class="page-item"><a class="page-link" onclick="OpenList(' +
+                                    (data.currentPage + 1) + ',' + length + ')">Next</a></li>'
+
+                            }
+                            form += '</ul>'
+                            form += '</nav>';
+                            $('#bioaddress').html(form);
+                        }
+                    })
+                }
+            });
+        }
+
+        function OpenListAddressDesc(currentPage, length) {
+            $.ajax({
+                url: '/api/addressmappeddesc?page=' + currentPage + '&size=' + length,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (data) {
+                    console.log(data)
+                    $.ajax({
+                        url: '/api/location',
+                        type: 'GET',
+                        contentType: 'application/json',
+                        success: function (location) {
+
+                            form = '<from>'
+                            for (let i = 0; i < data.biodataAddress.length; i++) {
+                                console.log("ini adalah biodata adress id :", data
+                                    .biodataAddress[i].id)
+                                form += '<div class="checkbox">'
+                                form += '<input  id="' + data.biodataAddress[i].id +
+                                    '"  class="box" value="' + data.biodataAddress[i].id +
+                                    '" type="checkbox" /> '
+                                form += '<label for="box"> ' + data.biodataAddress[i].label +
+                                    '</label><br>'
+                                form += '<label for="box"> ' + data.biodataAddress[i]
+                                    .recipient + ',</label>'
+                                form += '<label for="box"> ' + data.biodataAddress[i]
+                                    .recipientPhoneNumber + '</label><br>'
+                                form += '<label for="box">' + data.biodataAddress[i].address +
+                                    '</label>'
+                                form += '<label for="box">,' + data.biodataAddress[i].location
+                                    .name + '</label>'
+                                // console.log(bioaddress[i].location.parentId)
+                                if (data.biodataAddress[i].location.parentId != null) {
+                                    for (let j = 0; j < location.length; j++) {
+                                        console.log(data.biodataAddress[i].location.parentId)
+                                        console.log('ini adalah id location', location[j].id)
+                                        if (data.biodataAddress[i].location.parentId ==
+                                            location[j].id) {
+                                            console.log(location[j].name)
+                                            form += '<label for="box">,' + location[j].name +
+                                                '</label>'
+                                        }
+                                    }
+                                }
+
+                                form += '<p style="float: right;">'
+                                form += '<button class="btn btn-primary mr-2" value="' + data
+                                    .biodataAddress[i].id +
+                                    '" onclick="EditForm(this.value)">Ubah</button>'
+                                form += '<button class="btn btn-danger" value="' + data
+                                    .biodataAddress[i].id +
+                                    '" onclick="Delete(this.value)">Hapus</button>'
+                                form += '</p>'
+                                form += '</div><br><br>'
+                            }
+                            form += '</form><br><br>'
+
+                            form += '<nav aria-label="Page navigation">';
+                            form += '<ul class="pagination" style="float: right;">'
+
+                            form +=
+                                '<li class="page-item"><a class="page-link" onclick="OpenListAddress(' +
+                                (data.currentPage - 1) + ',' + length + ')">Previous</a></li>'
+                            let index = 1;
+                            for (let i = 0; i < data.totalPages; i++) {
+                                form +=
+                                    '<li class="page-item"><a id="pageslink" class="page-link" onclick="OpenListAddress(' +
+                                    i + ',' + length + ')">' + index + '</a></li>'
+                                index++;
+                            }
+                            if (data.currentPage + 1 == data.totalPages) {
+                                form +=
+                                    '<li class="page-item disabled"><a class="page-link" onclick="OpenList(' +
+                                    (data.currentPage + 1) + ',' + length + ')">Next</a></li>'
+
+                            } else {
+                                form +=
+                                    '<li class="page-item"><a class="page-link" onclick="OpenList(' +
+                                    (data.currentPage + 1) + ',' + length + ')">Next</a></li>'
+
+                            }
+                            form += '</ul>'
+                            form += '</nav>';
+                            $('#bioaddress').html(form);
+                        }
+                    })
+                }
+            });
+        }
+
+        // $.ajax({
+        //     success: function (bioaddress) {
+
+        $('#inputState').on('change', function (e) {
+            if ($('#inputState').val() == "recipient" && $('#inputdsc').val() != "dsc") {
+                OpenListRecipient(0, 3);
+            } else if ($('#inputState').val() == "address" && $('#inputdsc').val() != "dsc") {
+                OpenListAddress(0, 3);
+            } else if ($('#inputState').val() == "label" && $('#inputdsc').val() != "dsc") {
+                OpenList(0, 3);
+            } else if ($('#inputState').val() == "recipient" && $('#inputdsc').val() == "dsc") {
+                OpenListRecipientDesc(0, 3);
+            } else if ($('#inputState').val() == "address" && $('#inputdsc').val() == "dsc") {
+                OpenListAddressDesc(0, 3);
+            } else if ($('#inputState').val() == "label" && $('#inputdsc').val() == "dsc") {
+                OpenListDesc(0, 3);
+            }
+        })
+        OpenList(0, 3);
+        //     }
+        // });
+
+        $('#inputdsc').on('change', function (e) {
+            if ($('#inputState').val() == "recipient" && $('#inputdsc').val() == "dsc") {
+                OpenListRecipientDesc(0, 3);
+            } else if ($('#inputState').val() == "address" && $('#inputdsc').val() == "dsc") {
+                OpenListAddressDesc(0, 3);
+
+            } else if ($('#inputState').val() == "label" && $('#inputdsc').val() == "dsc") {
+                OpenListDesc(0, 3);
+            } else if ($('#inputState').val() == null && $('#inputdsc').val() == "dsc") {
+                OpenListDesc(0, 3);
+            } else if ($('#inputState').val() == "recipient" && $('#inputdsc').val() != "dsc") {
+                OpenListRecipient(0, 3);
+            } else if ($('#inputState').val() == "address" && $('#inputdsc').val() != "dsc") {
+                OpenListAddress(0, 3);
+            } else if ($('#inputState').val() == "label" && $('#inputdsc').val() != "dsc") {
+                OpenList(0, 3);
+            }
+        })
+    </script>
+</body>
+
+</html>

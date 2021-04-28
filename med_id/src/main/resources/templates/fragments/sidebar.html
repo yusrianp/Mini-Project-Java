@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="sidebar" sec:authorize="hasRole('ROLE_DOKTER')"  id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="#"><h4>Janji Pasien</h4></a> <br>
+        <a href="#"><h4>Chat Pasien</h4></a> <br>
+        <a href="#"><h4>Tindakan</h4></a> <br>
+        <a href="#"><h4>Spesialisasi</h4></a> <br>
+        <a href="#"><h4>Pengaturan</h4></a> <br>
+</div>
+
+
+<div th:fragment="sidebar1" sec:authorize="hasRole('ROLE_ADMIN')"  id="mySidenav1" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav1()">&times;</a>
+    <a href="#">Hubungan Pasien</a>
+        <a href="#">Jenjang Pendidikan</a>
+        <a href="#">Fasilitas Kesehatan</a>
+        <a href="#">Produk Kesehatan</a>
+        <a href="#">Golongan Darah</a>
+        <a href="#">Spesialisasi</a>
+        <a href="#">Level Lokasi</a>
+        <a href="#">Lokasi</a>
+        <a href="#">Jenis Kurir</a>
+        <a href="#">Kurir</a>
+        <a href="#">Daftar Bank</a>
+        <a href="#">Cara Pembayaran</a>
+        <a href="#">Hak Akses</a>
+        <a href="#">Pengaturan</a>
+</div>
+
+<div th:fragment="sidebar2" sec:authorize="hasRole('ROLE_PASIEN')"  id="mySidenav2" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav2()">&times;</a>
+    <a href="#"><h4>Buat Janji</h4></a> <br>
+        <a href="#"><h4>Konsultasi Dokter</h4></a> <br>
+        <a href="#"><h4>Cari Dokter</h4></a> <br>
+        <a href="#"><h4>Cari Obat</h4></a><br>
+        <a href="#"><h4>Pembayaran</h4></a><br>
+        <a href="#"><h4>Tarik Saldo</h4></a><br>
+</div>
+
+</body>
+</html>

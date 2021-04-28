@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:replace = "~{fragments/content :: title}">Title</title>
+
+    <th:block th:insert="~{fragments/head :: link}"></th:block>
+
+    <th:block th:insert="~{fragments/head :: head/script}"></th:block>
+
+</head>
+<body class="bg-light">
+    <div th:insert="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container-fluid">
+        <div class="row h-100">
+            <div>
+                <div th:insert="~{fragments/sidebar :: sidebar}"></div>
+            </div>
+            <div class="container-fluid">
+                <div class="px-4">
+                    <div th:insert="~{fragments/content :: content2}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:insert="~{fragments/footer :: footer}" class="footer" />
+</body>
+<script>
+    function Logout()
+    {
+        $.ajax({
+            url: '/logout',
+            contentType: 'application/json',
+            success: function (logout)
+            {
+                window.location.replace("/")
+            }
+        })
+    }
+</script>
+</html>

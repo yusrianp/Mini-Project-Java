@@ -1,0 +1,50 @@
+body{
+	margin:0;
+	padding: 0;
+	background:#f8f8f8;
+}
+.bintang{
+	margin-top: 30px;
+	position: absolute;
+	text-align: center;
+	margin-left: auto;
+	top:52%;
+	left: 50%;
+	transform: translate(-50%, -50%) rotateY(180deg);
+	display: flex;
+}
+.bintang input{
+	display: none;
+}
+.bintang label{
+	display: block;
+	cursor: pointer;
+	width: 18px;
+	/*background: #ccc;*/
+}
+.bintang label:before{
+	content:'\f005';
+	font-family: fontAwesome;
+	position: relative;
+	display: block;
+	font-size: 18px;
+	color: #101010;
+}
+.bintang label:after{
+	content:'\f005';
+	font-family: fontAwesome;
+	position: absolute;
+	display: block;
+	font-size: 18px;
+	color: #c29b2f;
+	top:0;
+	opacity: 0;
+	transition: .5s;
+	text-shadow: 0 2px 5px rgba(235, 233, 233, 0.5);
+}
+.bintang label:hover:after,
+.bintang label:hover ~ label:after,
+.bintang input:checked ~ label:after
+{
+	opacity: 1;
+}

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Pengaturan Akses</title>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-light " style="background-color: #e3f2fd;">
+        <a class="navbar-brand ml-3" href="#">PENGATURAN AKSES</a>
+    </nav>
+    <div class="container-fluid">
+        <div class="container col-md-12 mt-5">
+            <div class="row">
+                <div class="col-sm-4">
+                    <input class="form-control center" type="text" placeholder="Search by nama role"
+                        onkeyup="SearchRole(this.value)" autocomplete="off">
+                </div>
+            </div>
+        </div>
+        <div class="container col-md-12 mt-5" id="roleList">
+        </div>
+
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                    <button style="float: right;" onclick="BackWindow()">&times;</button>
+                </div>
+                <div class="modal-body"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+
+
+    <script src="/js/jquery-3.5.1.min.js"></script>
+    <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $.ajax({
+            success: function (role) {
+                OpenList(0, 3);
+            }
+        });
+
+        function SearchRole(request) {
+            //console.log(request)
+
+            if (request.length > 0) {
+                $.ajax({
+                    url: '/api/v1/searchrole/' + request,
+                    type: 'GET',
+                    contentType: 'application/json',
+                    success: function (role) {
+                        //console.log(result)
+                        let table = "<table class='table table-striped'>"
+                        table +=
+                            "<tr style='background-color: #e3f2fd;'><th class='text-center'>NAMA</th><th class='text-center'>KODE</th><th class='text-center'>#</th></tr>"
+                        if (role.length > 0) {
+                            for (let i = 0; i < role.length; i++) {
+                                table += "<tr>"
+                                table += "<td class='text-center'>" + role[i].name + "</td>"
+                                table += "<td class='text-center'>" + role[i].code + "</td>"
+                                table +=
+                                    "<td class='text-center'><button class='btn btn-primary mr-2' value='" +
+                                    role[i].id + "' onclick='Atur(this.value)'>Atur</button> </td>"
+                                table += "</tr>"
+                            }
+                        } else {
+                            table += "<tr class='text-center'>"
+                            table += "<td colspan='4' class='text-center'>No data</td>"
+                            table += "</tr>"
+                        }
+                        table += "</table>"
+                        $('#roleList').html(table);
+                    }
+                });
+            } else {
+                window.location.href = '/atur_akses/index'
+            }
+        }
+
+        function BackWindow() {
+            window.location.href = '/atur_akses/index'
+        }
+
+        function Atur(id) {
+
+
+            $.ajax({
+                url: '/api/menu',
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (menu) {
+
+                    $.ajax({
+                        url: '/api/menurole',
+                        type: 'GET',
+                        contentType: 'application/json',
+                        success: function (menurole) {
+
+                            let form = '<form class="ml-3">';
+                            form += '<div class="checkbox select-all">';
+                            form += ' <input id="all" type="checkbox" /> ';
+                            form += '<label for="all">Select all</label>';
+                            form += '</div>'
+                            for (let i = 0; i < menu.length; i++) {
+
+                                form += '<div class="checkbox rows">'
+                                form += '<input  id="' + menu[i].id + '"  class="box" value="' +
+                                    menu[i].id + '" type="checkbox" /> '
+                                form += '<label for="box"> ' + menu[i].name + '</label>'
+                                form += '</div>'
+
+                                if (menu[i].menus.length != 0) {
+
+                                    for (j = 0; j < menu[i].menus.length; j++) {
+                                        form += '<div class="checkbox rows ml-3 boxChild">'
+                                        form += '<input class="box" id ="' + menu[i].menus[j]
+                                            .id + '" value="' + menu[i].menus[j].id +
+                                            '" type="checkbox" /> '
+                                        form += '<label for="box"> ' + menu[i].menus[j].name +
+                                            '</label>'
+                                        form += '</div>'
+
+                                    }
+                                }
+                            }
+                            form += '<p style="float: right;">'
+                            form +=
+                                '<button class="btn btn-warning mr-2" onclick="BackWindow()">Batal</button>'
+                            form +=
+                                '<input type="submit" id="addSave" class="btn btn-primary" value="Simpan">'
+                            form += '</p>'
+                            form += '</form>'
+                            $('.modal-title').html("ATUR AKSES")
+                            $('.modal-body').html(form)
+                            $('#myModal').modal('show')
+
+
+                            if (menurole.length != 0) {
+                                for (let i = 0; i < menurole.length; i++) {
+                                    for (let j = 0; j < menu.length; j++) {
+                                        if (menurole[i].roleId == id && menurole[i].menuId ==
+                                            menu[j].id) {
+                                            $('#' + menu[j].id + '').prop('checked', true);
+                                        }
+                                        if (menu[j].menus.length != 0) {
+                                            for (let k = 0; k < menu[j].menus.length; k++) {
+                                                if (menurole[i].roleId == id && menurole[i]
+                                                    .menuId == menu[j].menus[k].id) {
+                                                    $('#' + menu[j].menus[k].id + '').prop(
+                                                        'checked', true);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            $('#all').change(function (e) {
+                                if (e.currentTarget.checked) {
+                                    $('.rows').find('input[type="checkbox"]').prop(
+                                        'checked', true);
+                                } else {
+                                    $('.rows').find('input[type="checkbox"]').prop(
+                                        'checked', false);
+                                }
+                            })
+
+                            $('#addSave').click(function () {
+
+                                var checks = $(
+                                    "input[type='checkbox']:checked"
+                                ); // returns object of checkeds.
+                                var unchecks = $("input[class='box']:not(:checked)");
+
+
+                                if (checks.length != 0) {
+                                    var count = 0;
+                                    if (menurole.length != 0) {
+                                        for (let j = 0; j < checks.length; j++) {
+                                            for (let i = 0; i < menurole.length; i++) {
+                                                if (menurole[i].roleId == id &&
+                                                    menurole[i].menuId == $(checks[j])
+                                                    .val()) {
+                                                    count++;
+                                                }
+                                            }
+                                            if (count == 0) {
+                                                let formData = '{';
+                                                formData += '"roleId":' + id + ',';
+                                                formData += '"menuId":' + $(checks[j])
+                                                    .val();
+                                                formData += '}';
+
+                                                $.ajax({
+                                                    url: '/api/menurole',
+                                                    type: 'POST',
+                                                    contentType: 'application/json',
+                                                    data: formData,
+                                                    success: function (data) {}
+                                                })
+                                            }
+                                            count = 0;
+                                        }
+                                        for (let j = 0; j < unchecks.length; j++) {
+                                            for (let i = 0; i < menurole.length; i++) {
+                                                if (menurole[i].roleId == id &&
+                                                    menurole[i].menuId == $(unchecks[j])
+                                                    .val()) {
+                                                    SoftDelete(menurole[i].id);
+                                                }
+                                            }
+                                        }
+                                    } else if (menurole.length == 0) {
+                                        for (let j = 0; j < checks.length; j++) {
+                                            let formData = '{';
+                                            formData += '"roleId":' + id + ',';
+                                            formData += '"menuId":' + $(checks[j])
+                                                .val();
+                                            formData += '}';
+
+                                            $.ajax({
+                                                url: '/api/menurole',
+                                                type: 'POST',
+                                                contentType: 'application/json',
+                                                data: formData,
+                                                success: function (data) {}
+                                            })
+                                        }
+                                    }
+
+                                } else {
+                                    alert("minimal pilih satu menu");
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        }
+
+        function SoftDelete(id) {
+
+            $.ajax({
+                url: '/api/menurole/' + id,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (menurole) {
+
+                    var formDataPut = '{';
+                    formDataPut += '"createdOn":"' + menurole.createdOn + '",';
+                    formDataPut += '"createdBy":"' + menurole.createdBy + '",';
+                    formDataPut += '"menuId":"' + menurole.menuId + '",';
+                    formDataPut += '"roleId":"' + menurole.roleId + '",';
+                    formDataPut += '"delete":"' + menurole.delete + '"';
+                    formDataPut += '}';
+                    console.log(id)
+                    console.log(formDataPut)
+                    $.ajax({
+                        url: '/api/menurole/' + id,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: formDataPut,
+                        success: function (data) {}
+                    })
+                }
+            })
+        }
+
+
+        function OpenList(currentPage, length) {
+            $.ajax({
+                url: '/api/v1/rolemapped?page=' + currentPage + '&size=' + length,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (data) {
+
+                    console.log(data)
+
+
+                    let table = "<table class='table table-striped'>";
+                    table +=
+                        "<tr style='background-color: #e3f2fd;'> <th class='text-center'>NAMA</th><th class='text-center'>KODE</th><th class='text-center'>#</th> </tr>"
+                    for (let i = 0; i < data.role.length; i++) {
+                        table += "<tr>";
+                        table += "<td class='text-center'>" + data.role[i].name + "</td>";
+                        table += "<td class='text-center'>" + data.role[i].code + "</td>";
+                        table += "<td class='text-center'><button class='btn btn-primary mr-2' value='" +
+                            data.role[i].id + "' onclick='Atur(this.value)'>Atur</button> </td>"
+                        table += "</tr>";
+                    }
+                    table += "</table>";
+                    table += "<br>"
+                    table += '<nav aria-label="Page navigation">';
+                    table += '<ul class="pagination" style="float: right;">'
+                    table += '<li class="page-item"><a class="page-link" onclick="OpenList(' + (data
+                        .currentPage - 1) + ',' + length + ')">Previous</a></li>'
+                    let index = 1;
+                    for (let i = 0; i < data.totalPages; i++) {
+                        table +=
+                            '<li class="page-item"><a id="pageslink" class="page-link" onclick="OpenList(' +
+                            i + ',' + length + ')">' + index + '</a></li>'
+                        index++;
+                    }
+                    table += '<li class="page-item"><a class="page-link" onclick="OpenList(' + (data
+                        .currentPage + 1) + ',' + length + ')">Next</a></li>'
+                    table += '</ul>'
+                    table += '</nav>';
+                    $('#roleList').html(table);
+                }
+            });
+
+        }
+    </script>
+</body>
+
+</html>

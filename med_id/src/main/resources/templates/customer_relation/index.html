@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hubungan Pasien</title>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-light " style="background-color: #e3f2fd;">
+        <a class="navbar-brand ml-3" href="#">HUBUNGAN PASIEN</a>
+    </nav>
+    <div class="container-fluid">
+        <div class="container col-md-12 mt-5">
+            <div class="row">
+                <div class="col-sm-4">
+                    <input class="form-control center" type="text" placeholder="Search by nama"
+                        onkeyup="SearchRelation(this.value)" autocomplete="off">
+                </div>
+                <div class="col-sm-8">
+                    <button class="btn btn-primary" style="float: right;" onclick="AddForm()">Tambah</button>
+                </div>
+            </div>
+        </div>
+        <div class="container col-md-12 mt-5" id="relationList">
+        </div>
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">UBAH</h5>
+                    <button style="float: right;" onclick="BackWindow()">&times;</button>
+                </div>
+
+                <div class="modal-body"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="/js/jquery-3.5.1.min.js"></script>
+    <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $.ajax({
+            url: '/api/relation',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (relation) {
+                let table = "<table class='table table-striped'>"
+                table +=
+                    "<tr style='background-color: #e3f2fd;'> <th class='text-center'>NAMA</th><th class='text-center'>#</th> </tr>"
+                for (let i = 0; i < relation.length; i++) {
+                    table += "<tr>"
+                    table += "<td class='text-center'>" + relation[i].name + "</td>"
+                    table += "<td class='text-center'><button class='btn btn-primary mr-2' value='" +
+                        relation[i].id +
+                        "' onclick='EditForm(this.value)'>U</button> <button class='btn btn-danger' value='" +
+                        relation[i].id + "' onclick='Delete(this.value)'>H</button> </td>"
+                    table += "</tr>"
+                }
+                table += "</table>";
+                $('#relationList').html(table);
+            }
+        });
+
+        function SearchRelation(request) {
+            //console.log(request)
+
+            if (request.length > 0) {
+                $.ajax({
+                    url: '/api/searchrelation/' + request,
+                    type: 'GET',
+                    contentType: 'application/json',
+                    success: function (relation) {
+                        //console.log(result)
+                        let table = "<table class='table table-striped'>"
+                        table +=
+                            "<tr style='background-color: #e3f2fd;'><th class='text-center'>NAMA</th><th class='text-center'>#</th></tr>"
+                        if (relation.length > 0) {
+                            for (let i = 0; i < relation.length; i++) {
+                                table += "<tr>";
+                                table += "<td class='text-center'>" + relation[i].name + "</td>"
+                                table +=
+                                    "<td class='text-center'><button class='btn btn-primary mr-2' value='" +
+                                    relation[i].id +
+                                    "' onclick='FormEdit(this.value)'>U</button> <button class='btn btn-danger' value='" +
+                                    relation[i].id + "' onclick='Delete(this.value)'>H</button> </td>"
+                                table += "</tr>"
+                            }
+                        } else {
+                            table += "<tr class='text-center'>"
+                            table += "<td colspan='4' class='text-center'>No data</td>";
+                            table += "</tr>"
+                        }
+                        table += "</table>"
+                        $('#relationList').html(table);
+                    }
+                });
+            } else {
+                window.location.href = '/relation/index'
+            }
+        }
+
+        function Delete(id) {
+            $.ajax({
+                url: '/api/relation/' + id,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (relation) {
+                    let table = "<p>"
+                    table += "Anda akan menghapus " + relation.name + " ?"
+                    table += "</p>"
+                    table += "<p style='float: right;'>"
+                    table += "<button class='btn btn-warning mr-2'  onclick='BackWindow()'>Tidak</button>"
+                    table += "<button class='btn btn-primary' value='" + relation.id +
+                        "' onclick='AgreeDelete(this.value)'>Ya</button>"
+                    table += "</p>"
+                    $('.modal-title').html("HAPUS !");
+                    $('.modal-body').html(table);
+                    $('#myModal').modal('show')
+                }
+            })
+        }
+
+        function AgreeDelete(id) {
+            $.ajax({
+                url: '/api/relation/' + id,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (relation) {
+                    let formData = '{';
+                    formData += '"createdOn":"' + relation.createdOn + '",';
+                    formData += '"createdBy":"' + relation.createdBy + '",';
+                    formData += '"name":"' + relation.name + '",';
+                    formData += '"delete":"' + relation.delete + '"';
+                    formData += '}';
+
+                    $.ajax({
+                        url: '/api/deleterelation/' + id,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: formData,
+                        success: function (data) {
+                            window.location.href = '/relation/index'
+                        }
+                    });
+                }
+            });
+        }
+
+        function EditForm(id) {
+            $.ajax({
+                url: '/api/relation/' + id,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (data) {
+                    $.ajax({
+                        url: '/api/relation',
+                        type: 'GET',
+                        contentType: 'application/json',
+                        success: function (relation) {
+                            let form = '<form class="needs-validation" >';
+                            form += '<div class="form-row">'
+                            form += '<div class="form-group mb-2">'
+                            form += '<label>Nama*</label>'
+                            form += '<input type="text" class="form-control mt-2" value="' + data.name +
+                                '" id="name" required>'
+                            form += '</div>'
+                            form += '</div>'
+                            form += '<p style="float: right;">'
+                            form += '<button class="btn btn-warning mr-2" onclick="BackWindow()">Batal</button>'
+                            form += '<input type="submit" id="updateForm" class="btn btn-primary" value="Save">'
+                            form += '</p>'
+                            form += '</form>'
+                            $('.modal-title').html("UBAH");
+                            $('.modal-body').html(form);
+                            $('#myModal').modal('show')
+
+                            $('#updateForm').click(function () {
+                                var name = $("#name").val();
+                                if (name != "") {
+                                    var count = 0;
+                                    for (i = 0; i < relation.length; i++) {
+                                        if (name.toLowerCase() == relation[i].name.toLowerCase()) {
+                                            count += 1;
+                                        }
+                                    }
+                                    console.log('ini adalah count', count)
+                                    if (count == 1) {
+                                        let formData = '{';
+                                        formData += '"createdOn":"' + data.createdOn + '",';
+                                        formData += '"createdBy":"' + data.createdBy + '",';
+                                        formData += '"deleteOn":"' + data.deleteOn + '",';
+                                        formData += '"deletedBy":"' + data.deletedBy + '",';
+                                        formData += '"name":"' + name + '",';
+                                        formData += '"delete":"' + data.delete + '"';
+                                        formData += '}';
+
+                                        $.ajax({
+                                            url: '/api/relation/' + id,
+                                            type: 'PUT',
+                                            contentType: 'application/json',
+                                            data: formData,
+                                            success: function (data) {
+                                                // window.location.href = '/relation/index'
+                                                $("#relationList").ajax.reload();
+
+                                            }
+                                        })
+                                    } else {
+                                        alert("Nama yang anda masukan sudah ada")
+
+
+                                    }
+
+                                }
+
+                            })
+                        }
+                    })
+                }
+            })
+        }
+
+        function BackWindow() {
+            window.location.href = '/relation/index'
+        }
+
+        function AddForm() {
+            let form = '<form class="needs-validation">';
+            form += '<div class="form-row">'
+            form += '<div class="form-group mb-2">'
+            form += '<label for="inputEmail4">Nama*</label>'
+            form += '<input type="text" class="form-control mt-2" id="add_name" required>'
+            form += '</div>'
+            form += '</div>'
+            form += '<p style="float: right;">'
+            form += '<button class="btn btn-warning mr-2" onclick="BackWindow()">Batal</button>'
+            form += '<button class="btn btn-primary" onclick = "Save(this.value)">Save</button>'
+            form += '</p>'
+            form += '</form>'
+            $('.modal-title').html("TAMBAH")
+            $('.modal-body').html(form)
+            $('#myModal').modal('show')
+        }
+
+        function Save() {
+            $.ajax({
+                url: '/api/relation',
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (relation) {
+                    var name = $("#add_name").val();
+                    if (name != "") {
+                        var count = 0;
+                        for (i = 0; i < relation.length; i++) {
+                            if (name.toLowerCase() == relation[i].name.toLowerCase()) {
+                                count += 1;
+                            }
+                        }
+                        if (count == 0) {
+                            let formData = '{';
+                            formData += '"name":"' + name + '"';
+                            formData += '}';
+                            $.ajax({
+                                url: '/api/relation',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: formData,
+                                success: function (data) {
+                                    window.location.href = '/relation/index'
+                                }
+                            })
+                        } else {
+                            alert("Nama yang anda masukan sudah ada")
+                        }
+                    }
+                }
+            })
+        }
+    </script>
+</body>
+
+</html>

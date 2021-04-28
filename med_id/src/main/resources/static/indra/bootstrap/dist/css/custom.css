@@ -1,0 +1,108 @@
+
+.btn-outline-success{
+    background: rgb(81, 179, 236);
+    border: 0;
+}
+
+.btn-primary:hover {
+    background: rgb(81, 179, 236);
+    border: 0;
+    font-family: 'Poppins';
+    font-weight: 400;
+}
+
+.btn-primary {
+    font-family: 'Poppins';
+    font-weight: 400;
+}
+
+.btn-outline-primary{
+    font-family: 'Poppins';
+    font-weight: 400;
+}
+
+.btn-secondary:hover {
+    background: none;
+    border: 1px solid rgb(159, 177, 197);
+    color: #173A56;
+}
+
+.heromed h5 {
+    font-family: 'Poppins';
+    font-weight: 400;
+    color: #1ccbe2;
+}
+
+/* .herobwa p {
+    font-family: 'Poppins';
+    font-weight: 400;
+    color: #2F281E;
+} */
+
+.navbar-nav .nav-link {
+    color: #2F281E;
+}
+
+
+html {
+    position: relative;
+    min-height: 100%;
+  }
+  body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+  }
+  .footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    line-height: 60px; /* Vertically center the text there */
+    background-color: #c3f0ff;
+  }
+  
+  
+  .sidenav {
+    height: 100%;
+    width: 200px;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #c3f0ff;
+    overflow-x: hidden;
+    padding-top: 120px;
+    padding-left: 30px;
+
+  }
+  
+  .sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #098cb4;
+    display: block;
+  }
+  
+  .sidenav a:hover {
+    color: #70a6a8;
+  }
+  
+  .main {
+    margin-left: 50px; /* Same as the width of the sidenav */
+    font-size: 28px; /* Increased text to enable scrolling */
+    padding: 20px 20px;
+  }
+  
+  @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  }
+  
+.heromed {
+    margin-left: 160px; /* Same as the width of the sidenav */
+    font-size: 28px; /* Increased text to enable scrolling */
+    padding: 0px 10px;
+  }
+  
